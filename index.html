@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ROTO.LIFE // CIVIC ENGINE</title>
+  <title>CONSPIRACY.GAME // CIVIC ENGINE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Share+Tech+Mono&family=Bebas+Neue&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -314,6 +314,43 @@ const CASES=[
    ],
    hypothesis:"The Butler security failure represents coordinated institutional negligence across multiple independent decision points — not random isolated incompetence",
    difficulty:"HARD",odds:{confirm:38,deny:62},analysts:310240,daysOpen:229},
+
+  // --- NEW CASES ---
+  {id:"c13", codename:"MOON SHADOW", category:"SPACE & DECEPTION", urgency:"MEDIUM",
+   headline:"Did We Really Land on the Moon? The Unexplained Anomalies",
+   brief:"Conspiracy theorists point to multiple anomalies: the flag waving in a vacuum, no blast crater under the lander, crosshairs behind objects, and the missing original tapes. NASA admits the high-res tapes were erased. The Van Allen radiation belt should have fried the astronauts, yet they survived. What really happened in 1969?",
+   evidence:[
+     {label:"NASA's Missing Tapes", note:"Original Apollo 11 telemetry tapes erased and reused. Only low-quality transfers remain."},
+     {label:"Flag Physics", note:"Flag appears to ripple despite no atmosphere. NASA says a horizontal rod held it, but footage shows movement."},
+     {label:"Radiation Belt Calculations", note:"Van Allen belt exposure would have been fatal unless shielded – but Apollo capsules had minimal shielding."},
+     {label:"Crosshair Anomalies", note:"In some photos, crosshairs appear behind objects, suggesting composite images."},
+   ],
+   hypothesis:"The Apollo 11 moon landing was staged, possibly because we lacked the technology to actually go, or because something was found there that had to be hidden.",
+   difficulty:"MODERATE", odds:{confirm:52, deny:48}, analysts:345678, daysOpen:20638},
+
+  {id:"c14", codename:"DARK WATERS", category:"ENVIRONMENTAL CRIME", urgency:"CRITICAL",
+   headline:"Did a Company Dump Toxic Waste and Bury the Evidence?",
+   brief:"Internal documents from a chemical plant show decades of dumping hexavalent chromium into unlined pits, contaminating groundwater for miles. Cancer rates in the surrounding town are 300% above national average. When the EPA finally investigated, key documents were 'accidentally' shredded and the company's lawyers got the statute of limitations applied retroactively.",
+   evidence:[
+     {label:"Internal Memo (1987)", note:"'Continue using Pit 5 – cheaper than proper disposal. Monitor wells not required.'"},
+     {label:"Cancer Registry Data", note:"Tripled leukemia rates in a 5-mile radius over 20 years. State health department buried the study."},
+     {label:"EPA Settlement", note:"Company paid $2M fine, no admission of guilt. Cleanup deemed 'not feasible.'"},
+     {label:"Whistleblower Testimony", note:"Former plant manager: 'We were told to shred everything pre-1990.'"},
+   ],
+   hypothesis:"The company knowingly poisoned a community and then used legal loopholes to avoid accountability – with state regulators looking the other way.",
+   difficulty:"HARD", odds:{confirm:81, deny:19}, analysts:12590, daysOpen:12783},
+
+  {id:"c15", codename:"TINY SINGULARITIES", category:"PHYSICS & SECRECY", urgency:"LOW",
+   headline:"CERN's Micro Black Holes: Are They Already Here?",
+   brief:"When the Large Hadron Collider was switched on, doomsayers warned of micro black holes. CERN assured us they're harmless. But recently, declassified documents reveal the US government funded parallel research into 'micro black hole production for energy generation.' Some physicists now speculate we've already created them – and they're being studied in secret labs.",
+   evidence:[
+     {label:"CERN Safety Reports", note:"Admit micro black holes could be produced, but say they'd evaporate instantly – based on theoretical math, not observation."},
+     {label:"DARPA Funding (Redacted)", note:"A 2019 budget line item: 'Stable microscopic singularity generation – Phase II' – later removed from public versions."},
+     {label:"Hawking Radiation Debate", note:"Hawking's theory that black holes evaporate has never been proven. Some argue they could be stable."},
+     {label:"Unexplained Energy Signatures", note:"Satellites detected unexplained gamma-ray bursts coinciding with LHC run times – officially dismissed as 'instrument error.'"},
+   ],
+   hypothesis:"CERN and related secret programs have successfully created stable micro black holes and are now studying them in classified facilities.",
+   difficulty:"EXTREME", odds:{confirm:23, deny:77}, analysts:45670, daysOpen:4380},
 ];
 
 const STAKES=[
@@ -435,7 +472,7 @@ Respond ONLY with valid JSON no markdown:
       <div className="wrap">
         <div className="header">
           <div>
-            <div className="logo" data-text="ROTO.LIFE">ROTO.LIFE</div>
+            <div className="logo" data-text="CONSPIRACY.GAME">CONSPIRACY.GAME</div>
             <span className="logo-sub">// CIVIC ENGINE — CROWDSOURCED INVESTIGATIVE PROTOCOL</span>
           </div>
           <div className="vp-block">
