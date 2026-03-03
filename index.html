@@ -5,8 +5,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CONSPIRACY.GAME // CIVIC ENGINE</title>
+  <!-- FIX: preconnect + preload fonts so they don't block first paint -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" />
+  <!-- FIX: load React before Babel, defer Babel so it doesn't block -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -43,6 +47,18 @@
 }
 
 html, body { background: var(--black); min-height: 100vh; }
+
+/* FIX: show a non-blank loading state while Babel compiles */
+#root:empty::after {
+  content: 'LOADING…';
+  display: block;
+  text-align: center;
+  padding-top: 48vh;
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 6px;
+  color: rgba(57,255,20,0.6);
+}
 
 .root {
   min-height: 100vh;
@@ -115,7 +131,6 @@ html, body { background: var(--black); min-height: 100vh; }
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 0;
 }
-.logo-block {}
 .logo {
   font-family: var(--display);
   font-size: 1.8rem;
@@ -186,12 +201,7 @@ html, body { background: var(--black); min-height: 100vh; }
   padding: 10px 24px;
   display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
 }
-.api-banner-text {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  color: var(--green-70);
-  flex-shrink: 0;
-}
+.api-banner-text { font-family: var(--mono); font-size: 0.72rem; color: var(--green-70); flex-shrink: 0; }
 .api-input {
   background: var(--black);
   border: 1px solid var(--border-green);
@@ -203,843 +213,280 @@ html, body { background: var(--black); min-height: 100vh; }
 }
 .api-input:focus { outline: none; border-color: var(--green); }
 .api-save-btn {
-  background: var(--green);
-  color: #000;
-  border: none;
-  font-family: var(--mono);
-  font-weight: 500;
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  padding: 7px 16px;
-  cursor: pointer;
-  white-space: nowrap;
+  background: var(--green); color: #000; border: none;
+  font-family: var(--mono); font-weight: 500; font-size: 0.7rem;
+  letter-spacing: 2px; padding: 7px 16px; cursor: pointer; white-space: nowrap;
   transition: opacity 0.2s;
 }
 .api-save-btn:hover { opacity: 0.85; }
-.api-dismiss {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  color: var(--white-40);
-  cursor: pointer;
-  margin-left: auto;
-}
+.api-dismiss { font-family: var(--mono); font-size: 0.65rem; color: var(--white-40); cursor: pointer; margin-left: auto; }
 
-/* ── SHARED ELEMENTS ────────────────────────────────── */
-.section-eyebrow {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 3px;
-  color: var(--green);
-  text-transform: uppercase;
-}
+/* ── SHARED ────────────────────────────────────────── */
+.section-eyebrow { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 3px; color: var(--green); text-transform: uppercase; }
 .box-label {
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 3px;
-  color: var(--green);
-  text-transform: uppercase;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 14px;
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 3px; color: var(--green);
+  text-transform: uppercase; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 14px;
 }
 .back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--white-40);
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  padding: 8px 16px;
-  cursor: pointer;
-  margin-bottom: 24px;
-  transition: border-color 0.2s, color 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; border: 1px solid var(--border); color: var(--white-40);
+  font-family: var(--mono); font-size: 0.7rem; letter-spacing: 2px;
+  padding: 8px 16px; cursor: pointer; margin-bottom: 24px; transition: border-color 0.2s, color 0.2s;
 }
 .back-btn:hover { border-color: var(--green); color: var(--green); }
 .divider { height: 1px; background: var(--border); margin: 0 0 20px; }
 
 /* ── HUB ────────────────────────────────────────────── */
 .hub { padding: 28px 0; }
-.hub-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-.hub-count {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  color: var(--white-40);
-  letter-spacing: 2px;
-}
-.filter-bar {
-  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
-}
+.hub-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.hub-count { font-family: var(--mono); font-size: 0.65rem; color: var(--white-40); letter-spacing: 2px; }
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
 .filter-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--white-40);
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 1.5px;
-  padding: 6px 12px;
-  cursor: pointer;
-  transition: all 0.15s;
-  text-transform: uppercase;
+  background: transparent; border: 1px solid var(--border); color: var(--white-40);
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 1.5px;
+  padding: 6px 12px; cursor: pointer; transition: all 0.15s; text-transform: uppercase;
 }
 .filter-btn:hover { border-color: var(--white-20); color: var(--white-70); }
-.filter-active {
-  border-color: var(--green) !important;
-  color: var(--green) !important;
-  background: var(--green-08) !important;
-}
+.filter-active { border-color: var(--green) !important; color: var(--green) !important; background: var(--green-08) !important; }
 
 .case-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 @media (max-width: 640px) { .case-grid { grid-template-columns: 1fr; } }
 
 .case-card {
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 20px;
-  cursor: pointer;
-  position: relative;
-  transition: border-color 0.2s, background 0.2s;
-  overflow: hidden;
+  border: 1px solid var(--border); background: var(--card);
+  padding: 20px; cursor: pointer; position: relative;
+  transition: border-color 0.2s, background 0.2s; overflow: hidden;
 }
 .case-card::after {
-  content: '';
-  position: absolute;
-  left: 0; top: 0;
-  width: 3px; height: 100%;
-  background: var(--green);
-  transform: scaleY(0);
-  transform-origin: bottom;
-  transition: transform 0.25s ease;
+  content: ''; position: absolute; left: 0; top: 0; width: 3px; height: 100%;
+  background: var(--green); transform: scaleY(0); transform-origin: bottom; transition: transform 0.25s ease;
 }
-.case-card:hover {
-  background: var(--card-hover);
-  border-color: var(--white-20);
-}
+.case-card:hover { background: var(--card-hover); border-color: var(--white-20); }
 .case-card:hover::after { transform: scaleY(1); }
 
-.card-eyebrow {
-  font-family: var(--mono);
-  font-size: 0.58rem;
-  letter-spacing: 3px;
-  color: var(--green);
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-.card-codename {
-  font-family: var(--display);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 4px;
-  color: var(--white-40);
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-.card-headline {
-  font-family: var(--display);
-  font-size: 1.25rem;
-  font-weight: 700;
-  line-height: 1.3;
-  color: var(--white);
-  margin-bottom: 16px;
-  padding-right: 60px;
-}
+.card-eyebrow { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 3px; color: var(--green); text-transform: uppercase; margin-bottom: 6px; }
+.card-codename { font-family: var(--display); font-size: 0.85rem; font-weight: 700; letter-spacing: 4px; color: var(--white-40); text-transform: uppercase; margin-bottom: 8px; }
+.card-headline { font-family: var(--display); font-size: 1.25rem; font-weight: 700; line-height: 1.3; color: var(--white); margin-bottom: 16px; padding-right: 60px; }
 .card-diff {
-  position: absolute;
-  top: 16px; right: 16px;
-  font-family: var(--mono);
-  font-size: 0.5rem;
-  letter-spacing: 2px;
-  padding: 3px 7px;
-  border: 1px solid;
-  text-transform: uppercase;
+  position: absolute; top: 16px; right: 16px;
+  font-family: var(--mono); font-size: 0.5rem; letter-spacing: 2px; padding: 3px 7px; border: 1px solid; text-transform: uppercase;
 }
 .diff-mod { color: var(--green); border-color: var(--green-20); }
 .diff-hard { color: var(--orange); border-color: rgba(255,140,0,0.3); }
-.diff-ext {
-  color: var(--red);
-  border-color: var(--red-20);
-  animation: pulse-red 2s infinite;
-}
-.card-meta {
-  display: flex; gap: 16px;
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  color: var(--white-40);
-  margin-bottom: 12px;
-}
+.diff-ext { color: var(--red); border-color: var(--red-20); animation: pulse-red 2s infinite; }
+.card-meta { display: flex; gap: 16px; font-family: var(--mono); font-size: 0.62rem; color: var(--white-40); margin-bottom: 12px; }
 .odds-bar { height: 2px; background: var(--white-08); border-radius: 1px; overflow: hidden; }
 .odds-fill { height: 100%; background: var(--green); transition: width 0.3s; }
-.odds-labels {
-  display: flex; justify-content: space-between;
-  margin-top: 5px;
-  font-family: var(--mono);
-  font-size: 0.6rem;
-}
+.odds-labels { display: flex; justify-content: space-between; margin-top: 5px; font-family: var(--mono); font-size: 0.6rem; }
 .lbl-confirm { color: var(--green); }
 .lbl-deny { color: var(--red); }
-
-.hub-footer {
-  text-align: center;
-  padding: 24px 0;
-  border-top: 1px solid var(--border);
-  margin-top: 12px;
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 2.5px;
-  color: var(--white-20);
-  text-transform: uppercase;
-}
+.hub-footer { text-align: center; padding: 24px 0; border-top: 1px solid var(--border); margin-top: 12px; font-family: var(--mono); font-size: 0.6rem; letter-spacing: 2.5px; color: var(--white-20); text-transform: uppercase; }
 
 /* ── CASE BRIEF ─────────────────────────────────────── */
 .brief-screen { padding: 24px 0; }
-
-.case-file {
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 28px;
-  margin-bottom: 12px;
-  position: relative;
-}
-.urgency-tag {
-  position: absolute;
-  top: 20px; right: 20px;
-  font-family: var(--mono);
-  font-size: 0.55rem;
-  letter-spacing: 2.5px;
-  padding: 4px 9px;
-  border: 1px solid;
-  text-transform: uppercase;
-}
+.case-file { border: 1px solid var(--border); background: var(--card); padding: 28px; margin-bottom: 12px; position: relative; }
+.urgency-tag { position: absolute; top: 20px; right: 20px; font-family: var(--mono); font-size: 0.55rem; letter-spacing: 2.5px; padding: 4px 9px; border: 1px solid; text-transform: uppercase; }
 .urg-low   { color: var(--white-40); border-color: var(--white-20); }
 .urg-med   { color: var(--white-70); border-color: var(--white-40); }
 .urg-high  { color: var(--orange);   border-color: rgba(255,140,0,0.4); }
-.urg-critical {
-  color: var(--red); border-color: var(--red-20);
-  animation: pulse-red 1.5s infinite;
-}
-
-.file-eyebrow {
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 3px;
-  color: var(--green);
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-.file-headline {
-  font-family: var(--display);
-  font-size: 2rem;
-  font-weight: 800;
-  line-height: 1.2;
-  color: var(--white);
-  margin-bottom: 18px;
-  padding-right: 100px;
-}
-.file-brief {
-  font-family: var(--body);
-  font-size: 0.95rem;
-  line-height: 1.8;
-  color: var(--white-70);
-  margin-bottom: 20px;
-}
-.file-stats {
-  display: flex; gap: 24px; flex-wrap: wrap;
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  color: var(--white-40);
-  border-top: 1px solid var(--border);
-  padding-top: 14px;
-}
-
-.evidence-box {
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 22px;
-  margin-bottom: 12px;
-}
-.ev-row {
-  display: flex; gap: 16px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-}
+.urg-critical { color: var(--red); border-color: var(--red-20); animation: pulse-red 1.5s infinite; }
+.file-eyebrow { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 3px; color: var(--green); text-transform: uppercase; margin-bottom: 10px; }
+.file-headline { font-family: var(--display); font-size: 2rem; font-weight: 800; line-height: 1.2; color: var(--white); margin-bottom: 18px; padding-right: 100px; }
+.file-brief { font-family: var(--body); font-size: 0.95rem; line-height: 1.8; color: var(--white-70); margin-bottom: 20px; }
+.file-stats { display: flex; gap: 24px; flex-wrap: wrap; font-family: var(--mono); font-size: 0.62rem; color: var(--white-40); border-top: 1px solid var(--border); padding-top: 14px; }
+.evidence-box { border: 1px solid var(--border); background: var(--card); padding: 22px; margin-bottom: 12px; }
+.ev-row { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); }
 .ev-row:last-child { border-bottom: none; padding-bottom: 0; }
-.ev-key {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  color: var(--green);
-  min-width: 190px;
-  flex-shrink: 0;
-  line-height: 1.6;
-}
-.ev-val {
-  font-family: var(--body);
-  font-size: 0.88rem;
-  color: var(--white-70);
-  line-height: 1.65;
-}
-@media (max-width: 540px) {
-  .ev-row { flex-direction: column; }
-  .ev-key { min-width: unset; }
-}
+.ev-key { font-family: var(--mono); font-size: 0.75rem; color: var(--green); min-width: 190px; flex-shrink: 0; line-height: 1.6; }
+.ev-val { font-family: var(--body); font-size: 0.88rem; color: var(--white-70); line-height: 1.65; }
+@media (max-width: 540px) { .ev-row { flex-direction: column; } .ev-key { min-width: unset; } }
 
 .odds-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-.odds-box {
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 18px;
-  text-align: center;
-}
-.ob-label {
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 2.5px;
-  color: var(--white-40);
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-.ob-value {
-  font-family: var(--display);
-  font-size: 2.8rem;
-  font-weight: 800;
-  line-height: 1;
-}
+.odds-box { border: 1px solid var(--border); background: var(--card); padding: 18px; text-align: center; }
+.ob-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 2.5px; color: var(--white-40); text-transform: uppercase; margin-bottom: 8px; }
+.ob-value { font-family: var(--display); font-size: 2.8rem; font-weight: 800; line-height: 1; }
 .ob-green { color: var(--green); text-shadow: var(--glow-green); }
 .ob-red   { color: var(--red);   text-shadow: var(--glow-red); }
-
-.hyp-box {
-  border: 1px solid var(--border-green);
-  background: var(--green-08);
-  padding: 20px;
-  margin-bottom: 20px;
-}
-.hyp-quote {
-  font-family: var(--display);
-  font-size: 1.15rem;
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--white);
-}
-
+.hyp-box { border: 1px solid var(--border-green); background: var(--green-08); padding: 20px; margin-bottom: 20px; }
+.hyp-quote { font-family: var(--display); font-size: 1.15rem; font-weight: 600; line-height: 1.5; color: var(--white); }
 .cta-btn {
-  width: 100%;
-  background: var(--green);
-  color: #000;
-  border: none;
-  font-family: var(--display);
-  font-size: 1.2rem;
-  font-weight: 800;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  padding: 18px;
-  cursor: pointer;
-  transition: opacity 0.2s, box-shadow 0.2s;
+  width: 100%; background: var(--green); color: #000; border: none;
+  font-family: var(--display); font-size: 1.2rem; font-weight: 800; letter-spacing: 5px; text-transform: uppercase;
+  padding: 18px; cursor: pointer; transition: opacity 0.2s, box-shadow 0.2s;
 }
 .cta-btn:hover { opacity: 0.9; box-shadow: var(--glow-green); }
 
 /* ── ANALYSIS ────────────────────────────────────────── */
 .analysis-screen { padding: 24px 0; }
-.screen-head {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 3px;
-  color: var(--green);
-  text-transform: uppercase;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 22px;
-}
-
+.screen-head { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 3px; color: var(--green); text-transform: uppercase; padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 22px; }
 .stance-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
 .stance-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--white-40);
-  font-family: var(--display);
-  font-size: 1.3rem;
-  font-weight: 700;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  padding: 18px;
-  cursor: pointer;
-  transition: all 0.2s;
+  background: transparent; border: 1px solid var(--border); color: var(--white-40);
+  font-family: var(--display); font-size: 1.3rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase;
+  padding: 18px; cursor: pointer; transition: all 0.2s;
 }
 .stance-btn:hover { border-color: var(--white-20); color: var(--white); }
-.stance-confirm {
-  background: var(--green-08) !important;
-  border-color: var(--green) !important;
-  color: var(--green) !important;
-}
-.stance-deny {
-  background: var(--red-08) !important;
-  border-color: var(--red) !important;
-  color: var(--red) !important;
-}
-
-.field-label {
-  display: flex; justify-content: space-between; align-items: center;
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 2.5px;
-  color: var(--green);
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-.field-hint {
-  font-size: 0.58rem;
-  letter-spacing: 1.5px;
-  color: var(--white-20);
-}
+.stance-confirm { background: var(--green-08) !important; border-color: var(--green) !important; color: var(--green) !important; }
+.stance-deny    { background: var(--red-08) !important; border-color: var(--red) !important; color: var(--red) !important; }
+.field-label { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 2.5px; color: var(--green); text-transform: uppercase; margin-bottom: 10px; }
+.field-hint { font-size: 0.58rem; letter-spacing: 1.5px; color: var(--white-20); }
 .reasoning-area {
-  width: 100%;
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--white);
-  font-family: var(--body);
-  font-size: 0.95rem;
-  line-height: 1.75;
-  padding: 18px;
-  resize: vertical;
-  min-height: 160px;
+  width: 100%; background: var(--card); border: 1px solid var(--border); color: var(--white);
+  font-family: var(--body); font-size: 0.95rem; line-height: 1.75; padding: 18px; resize: vertical; min-height: 160px;
   transition: border-color 0.2s;
 }
 .reasoning-area:focus { outline: none; border-color: var(--green); }
 .reasoning-area::placeholder { color: var(--white-20); }
-.char-row {
-  display: flex; justify-content: space-between;
-  margin-top: 6px;
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  color: var(--white-40);
-}
+.char-row { display: flex; justify-content: space-between; margin-top: 6px; font-family: var(--mono); font-size: 0.6rem; color: var(--white-40); }
 .char-good { color: var(--green); }
-
 .stake-label-block { margin: 22px 0 10px; }
-.stake-note {
-  font-family: var(--body);
-  font-size: 0.85rem;
-  line-height: 1.7;
-  color: var(--white-40);
-  margin-bottom: 12px;
-}
+.stake-note { font-family: var(--body); font-size: 0.85rem; line-height: 1.7; color: var(--white-40); margin-bottom: 12px; }
 .stake-item {
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 14px 18px;
+  border: 1px solid var(--border); background: var(--card); padding: 14px 18px;
   display: flex; justify-content: space-between; align-items: center;
-  cursor: pointer;
-  margin-bottom: 8px;
-  transition: border-color 0.2s, background 0.2s;
-  font-family: var(--body);
-  font-size: 0.9rem;
-  color: var(--white-70);
+  cursor: pointer; margin-bottom: 8px; transition: border-color 0.2s, background 0.2s;
+  font-family: var(--body); font-size: 0.9rem; color: var(--white-70);
 }
 .stake-item:hover { border-color: var(--white-20); }
-.stake-selected {
-  border-color: var(--green) !important;
-  background: var(--green-08) !important;
-  color: var(--white) !important;
-}
-.stake-time {
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  color: var(--white-40);
-  margin-left: 16px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
+.stake-selected { border-color: var(--green) !important; background: var(--green-08) !important; color: var(--white) !important; }
+.stake-time { font-family: var(--mono); font-size: 0.62rem; color: var(--white-40); margin-left: 16px; white-space: nowrap; flex-shrink: 0; }
 .submit-btn {
-  width: 100%;
-  background: transparent;
-  border: 1px solid var(--green);
-  color: var(--green);
-  font-family: var(--display);
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  padding: 18px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-  margin-top: 4px;
+  width: 100%; background: transparent; border: 1px solid var(--green); color: var(--green);
+  font-family: var(--display); font-size: 1.1rem; font-weight: 700; letter-spacing: 5px; text-transform: uppercase;
+  padding: 18px; cursor: pointer; transition: background 0.2s, color 0.2s, box-shadow 0.2s; margin-top: 4px;
 }
-.submit-btn:hover:not([disabled]) {
-  background: var(--green);
-  color: #000;
-  box-shadow: var(--glow-green);
-}
-.submit-btn[disabled] {
-  border-color: var(--white-08);
-  color: var(--white-20);
-  cursor: not-allowed;
-}
+.submit-btn:hover:not([disabled]) { background: var(--green); color: #000; box-shadow: var(--glow-green); }
+.submit-btn[disabled] { border-color: var(--white-08); color: var(--white-20); cursor: not-allowed; }
 
 /* ── LOADING ─────────────────────────────────────────── */
-.loading-screen {
-  display: flex; flex-direction: column; align-items: center;
-  padding: 80px 0;
-}
-.load-title {
-  font-family: var(--display);
-  font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: 8px;
-  color: var(--green);
-  text-transform: uppercase;
-  margin-bottom: 36px;
-  text-shadow: var(--glow-green);
-}
-.term-line {
-  font-family: var(--mono);
-  font-size: 0.8rem;
-  letter-spacing: 1px;
-  padding: 4px 0;
-  animation: fadeUp 0.3s ease both;
-  width: 100%;
-  max-width: 500px;
-  line-height: 1.6;
-}
+.loading-screen { display: flex; flex-direction: column; align-items: center; padding: 80px 0; }
+.load-title { font-family: var(--display); font-size: 1.5rem; font-weight: 800; letter-spacing: 8px; color: var(--green); text-transform: uppercase; margin-bottom: 36px; text-shadow: var(--glow-green); }
+.term-line { font-family: var(--mono); font-size: 0.8rem; letter-spacing: 1px; padding: 4px 0; animation: fadeUp 0.3s ease both; width: 100%; max-width: 500px; line-height: 1.6; }
 .t-ok   { color: var(--green); }
 .t-warn { color: var(--orange); }
 .t-dim  { color: var(--white-20); }
-.blink-cur {
-  width: 10px; height: 20px;
-  background: var(--green);
-  display: inline-block;
-  margin-top: 18px;
-  animation: blink 0.8s step-start infinite;
-  box-shadow: var(--glow-green);
-}
+.blink-cur { width: 10px; height: 20px; background: var(--green); display: inline-block; margin-top: 18px; animation: blink 0.8s step-start infinite; box-shadow: var(--glow-green); }
 
 /* ── VERDICT ─────────────────────────────────────────── */
 .verdict-screen { padding: 24px 0; }
-.verdict-frame {
-  border-width: 2px;
-  border-style: solid;
-  padding: 36px 28px;
-  margin-bottom: 14px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.vf-verified {
-  border-color: var(--green);
-  background: var(--green-08);
-}
-.vf-insufficient {
-  border-color: var(--white-20);
-  background: var(--white-04);
-}
-.vf-rejected {
-  border-color: var(--red);
-  background: var(--red-08);
-}
-
-.verdict-stamp {
-  font-family: var(--display);
-  font-size: 3.5rem;
-  font-weight: 900;
-  letter-spacing: 12px;
-  text-transform: uppercase;
-  display: block;
-  margin-bottom: 8px;
-  line-height: 1;
-}
+.verdict-frame { border-width: 2px; border-style: solid; padding: 36px 28px; margin-bottom: 14px; text-align: center; position: relative; overflow: hidden; }
+.vf-verified { border-color: var(--green); background: var(--green-08); }
+.vf-insufficient { border-color: var(--white-20); background: var(--white-04); }
+.vf-rejected { border-color: var(--red); background: var(--red-08); }
+.verdict-stamp { font-family: var(--display); font-size: 3.5rem; font-weight: 900; letter-spacing: 12px; text-transform: uppercase; display: block; margin-bottom: 8px; line-height: 1; }
 .vs-verified    { color: var(--green); text-shadow: var(--glow-green); }
 .vs-insufficient { color: var(--white-70); }
 .vs-rejected    { color: var(--red); text-shadow: var(--glow-red); }
-
-.verdict-score {
-  font-family: var(--display);
-  font-size: 7rem;
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: -2px;
-}
+.verdict-score { font-family: var(--display); font-size: 7rem; font-weight: 900; line-height: 1; letter-spacing: -2px; }
 .score-verified    { color: var(--green); text-shadow: var(--glow-green); }
 .score-insufficient { color: var(--white-70); }
 .score-rejected    { color: var(--red); text-shadow: var(--glow-red); }
-
-.score-sub {
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 3px;
-  color: var(--white-40);
-  margin: 8px 0 14px;
-  text-transform: uppercase;
-}
-.vp-delta {
-  font-family: var(--display);
-  font-size: 1.3rem;
-  font-weight: 700;
-  letter-spacing: 3px;
-}
+.score-sub { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 3px; color: var(--white-40); margin: 8px 0 14px; text-transform: uppercase; }
+.vp-delta { font-family: var(--display); font-size: 1.3rem; font-weight: 700; letter-spacing: 3px; }
 .delta-pos  { color: var(--green); }
 .delta-neg  { color: var(--red); }
 .delta-zero { color: var(--white-40); }
-
-.verdict-card {
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 20px;
-  margin-bottom: 12px;
-}
-.verdict-summary-text {
-  font-family: var(--body);
-  font-size: 0.95rem;
-  line-height: 1.8;
-  color: var(--white-70);
-}
-
+.verdict-card { border: 1px solid var(--border); background: var(--card); padding: 20px; margin-bottom: 12px; }
+.verdict-summary-text { font-family: var(--body); font-size: 0.95rem; line-height: 1.8; color: var(--white-70); }
 .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 @media (max-width: 580px) { .sw-grid { grid-template-columns: 1fr; } }
 .sw-box { border: 1px solid var(--border); background: var(--card); padding: 18px; }
-.sw-head {
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
+.sw-head { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
 .sw-green { color: var(--green); }
 .sw-red   { color: var(--red); }
-.sw-item {
-  font-family: var(--body);
-  font-size: 0.88rem;
-  line-height: 1.6;
-  color: var(--white-70);
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border);
-}
+.sw-item { font-family: var(--body); font-size: 0.88rem; line-height: 1.6; color: var(--white-70); padding: 8px 0; border-bottom: 1px solid var(--border); }
 .sw-item:last-child { border-bottom: none; padding-bottom: 0; }
-
-.action-btn {
-  width: 100%;
-  border: none;
-  font-family: var(--display);
-  font-size: 1.1rem;
-  font-weight: 800;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  padding: 18px;
-  cursor: pointer;
-  transition: opacity 0.2s;
-  margin-bottom: 10px;
-}
+.action-btn { width: 100%; border: none; font-family: var(--display); font-size: 1.1rem; font-weight: 800; letter-spacing: 5px; text-transform: uppercase; padding: 18px; cursor: pointer; transition: opacity 0.2s; margin-bottom: 10px; }
 .action-btn:hover { opacity: 0.88; }
 .btn-green { background: var(--green); color: #000; }
 .btn-red   { background: var(--red);   color: #fff; }
 
 /* ── DEBT ────────────────────────────────────────────── */
 .debt-screen { padding: 24px 0; }
-.debt-header {
-  border: 2px solid var(--red);
-  background: var(--red-08);
-  padding: 32px;
-  margin-bottom: 14px;
-  text-align: center;
-}
-.debt-title {
-  font-family: var(--display);
-  font-size: 2.8rem;
-  font-weight: 900;
-  letter-spacing: 10px;
-  color: var(--red);
-  text-transform: uppercase;
-  text-shadow: var(--glow-red);
-  margin-bottom: 12px;
-}
-.debt-sub {
-  font-family: var(--body);
-  font-size: 0.92rem;
-  line-height: 1.75;
-  color: var(--white-70);
-}
-.debt-task {
-  border: 1px solid var(--red-20);
-  background: var(--card);
-  padding: 24px;
-  margin-bottom: 14px;
-}
-.debt-task-label {
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 3px;
-  color: var(--red);
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-.debt-task-text {
-  font-family: var(--body);
-  font-size: 1rem;
-  line-height: 1.75;
-  color: var(--white);
-}
-.honor-text {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  line-height: 1.85;
-  color: var(--white-40);
-  text-align: center;
-  padding: 20px;
-  border: 1px dashed var(--white-08);
-  margin-bottom: 22px;
-}
+.debt-header { border: 2px solid var(--red); background: var(--red-08); padding: 32px; margin-bottom: 14px; text-align: center; }
+.debt-title { font-family: var(--display); font-size: 2.8rem; font-weight: 900; letter-spacing: 10px; color: var(--red); text-transform: uppercase; text-shadow: var(--glow-red); margin-bottom: 12px; }
+.debt-sub { font-family: var(--body); font-size: 0.92rem; line-height: 1.75; color: var(--white-70); }
+.debt-task { border: 1px solid var(--red-20); background: var(--card); padding: 24px; margin-bottom: 14px; }
+.debt-task-label { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 3px; color: var(--red); text-transform: uppercase; margin-bottom: 12px; }
+.debt-task-text { font-family: var(--body); font-size: 1rem; line-height: 1.75; color: var(--white); }
+.honor-text { font-family: var(--mono); font-size: 0.7rem; line-height: 1.85; color: var(--white-40); text-align: center; padding: 20px; border: 1px dashed var(--white-08); margin-bottom: 22px; }
 .clear-btn {
-  width: 100%;
-  background: transparent;
-  border: 1px solid var(--green);
-  color: var(--green);
-  font-family: var(--display);
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  padding: 18px;
-  cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
+  width: 100%; background: transparent; border: 1px solid var(--green); color: var(--green);
+  font-family: var(--display); font-size: 1.1rem; font-weight: 700; letter-spacing: 5px; text-transform: uppercase;
+  padding: 18px; cursor: pointer; transition: background 0.2s, box-shadow 0.2s;
 }
 .clear-btn:hover { background: var(--green-08); box-shadow: var(--glow-green); }
 
-/* ── INIT ────────────────────────────────────────────── */
-.init-screen {
-  display: flex; justify-content: center; align-items: center;
-  min-height: 100vh;
-}
+/* ── SCORE BREAKDOWN ── */
+.score-breakdown { border: 1px solid var(--border); background: var(--card); padding: 20px; margin-bottom: 12px; }
+.breakdown-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
+@media (max-width: 480px) { .breakdown-grid { grid-template-columns: 1fr; } }
+.breakdown-item { border: 1px solid var(--border); background: var(--black); padding: 12px; }
+.bi-label { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 2px; color: var(--white-40); text-transform: uppercase; margin-bottom: 4px; }
+.bi-desc { font-family: var(--body); font-size: 0.82rem; line-height: 1.55; color: var(--white-70); }
+.bi-tip { font-family: var(--mono); font-size: 0.65rem; color: var(--green); margin-top: 5px; }
 
-.site-footer {
-  border-top: 1px solid var(--border);
-  padding: 28px 24px;
-  margin-top: 40px;
-}
-.site-footer-inner {
-  max-width: 960px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-.footer-logo {
-  width: 28px;
-  height: 28px;
-  opacity: 0.85;
-  filter: drop-shadow(0 0 4px rgba(57,255,20,0.4));
-}
-.footer-text {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 2px;
-  color: var(--white-40);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.footer-heart {
-  color: var(--green);
-  font-size: 0.75rem;
-}
-.footer-name {
-  color: var(--white-70);
-}
+/* ── ONBOARDING ── */
+.onboard-screen { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 40px 0; }
+.onboard-hero { text-align: center; margin-bottom: 48px; }
+.onboard-logo { font-family: var(--display); font-size: 3rem; font-weight: 900; letter-spacing: 6px; color: var(--green); text-shadow: var(--glow-green); display: block; margin-bottom: 8px; }
+.onboard-tagline { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 3px; color: var(--white-40); text-transform: uppercase; }
+.onboard-steps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 32px; }
+@media (max-width: 600px) { .onboard-steps { grid-template-columns: 1fr; } .onboard-logo { font-size: 2rem; } }
+.onboard-step { border: 1px solid var(--border); background: var(--card); padding: 20px; position: relative; }
+.onboard-step-num { font-family: var(--display); font-size: 3rem; font-weight: 900; color: var(--green-20); line-height: 1; margin-bottom: 8px; }
+.onboard-step-title { font-family: var(--display); font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; color: var(--white); text-transform: uppercase; margin-bottom: 8px; }
+.onboard-step-text { font-family: var(--body); font-size: 0.88rem; line-height: 1.7; color: var(--white-70); }
+.onboard-step-text strong { color: var(--green); font-weight: 600; }
+.onboard-scoring { border: 1px solid var(--border-green); background: var(--green-08); padding: 22px; margin-bottom: 28px; }
+.onboard-scoring-title { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 3px; color: var(--green); text-transform: uppercase; margin-bottom: 16px; }
+.scoring-criteria { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media (max-width: 500px) { .scoring-criteria { grid-template-columns: 1fr; } }
+.scoring-criterion { display: flex; gap: 12px; align-items: flex-start; }
+.sc-pct { font-family: var(--display); font-size: 1.4rem; font-weight: 800; color: var(--green); line-height: 1; flex-shrink: 0; width: 44px; }
+.sc-label { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 1.5px; color: var(--white); text-transform: uppercase; margin-bottom: 3px; }
+.sc-desc { font-family: var(--body); font-size: 0.78rem; line-height: 1.55; color: var(--white-40); }
+.onboard-verdicts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 28px; }
+@media (max-width: 480px) { .onboard-verdicts { grid-template-columns: 1fr; } }
+.onboard-verdict-item { border: 1px solid var(--border); background: var(--card); padding: 14px; text-align: center; }
+.ov-stamp { font-family: var(--display); font-size: 1rem; font-weight: 800; letter-spacing: 3px; margin-bottom: 4px; }
+.ov-range { font-family: var(--mono); font-size: 0.62rem; color: var(--white-40); margin-bottom: 6px; }
+.ov-desc { font-family: var(--body); font-size: 0.78rem; line-height: 1.5; color: var(--white-70); }
+.ov-green { color: var(--green); }
+.ov-white { color: var(--white-70); }
+.ov-red   { color: var(--red); }
+.onboard-enter-btn { width: 100%; background: var(--green); color: #000; border: none; font-family: var(--display); font-size: 1.3rem; font-weight: 900; letter-spacing: 6px; text-transform: uppercase; padding: 20px; cursor: pointer; transition: opacity 0.2s, box-shadow 0.2s; }
+.onboard-enter-btn:hover { opacity: 0.9; box-shadow: var(--glow-green); }
+.onboard-skip { text-align: center; margin-top: 14px; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 2px; color: var(--white-20); cursor: pointer; transition: color 0.2s; }
+.onboard-skip:hover { color: var(--white-40); }
 
+/* ── COMMUNITY ── */
 .community-section { margin-bottom: 14px; }
-.community-analysis {
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 18px;
-  margin-bottom: 8px;
-}
-.ca-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-.ca-analyst {
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 2px;
-  color: var(--green);
-}
-.ca-score {
-  font-family: var(--display);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--green);
-}
-.ca-stance {
-  font-family: var(--mono);
-  font-size: 0.58rem;
-  letter-spacing: 2px;
-  padding: 2px 8px;
-  border: 1px solid;
-  margin-left: 10px;
-}
+.community-analysis { border: 1px solid var(--border); background: var(--card); padding: 18px; margin-bottom: 8px; }
+.ca-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.ca-analyst { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 2px; color: var(--green); }
+.ca-score { font-family: var(--display); font-size: 1.1rem; font-weight: 700; color: var(--green); }
+.ca-stance { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 2px; padding: 2px 8px; border: 1px solid; margin-left: 10px; }
 .ca-confirm { color: var(--green); border-color: var(--green-20); }
 .ca-deny    { color: var(--red);   border-color: var(--red-20); }
-.ca-text {
-  font-family: var(--body);
-  font-size: 0.88rem;
-  line-height: 1.75;
-  color: var(--white-70);
-}
+.ca-text { font-family: var(--body); font-size: 0.88rem; line-height: 1.75; color: var(--white-70); }
 
 /* ── EXAMPLE BOX ── */
-.example-box {
-  border: 1px solid var(--border-green);
-  background: var(--green-08);
-  padding: 18px;
-  margin-bottom: 16px;
-}
-.example-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-.example-label {
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 3px;
-  color: var(--green);
-  text-transform: uppercase;
-}
-.example-score {
-  font-family: var(--display);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--green);
-}
-.example-text {
-  font-family: var(--body);
-  font-size: 0.88rem;
-  line-height: 1.75;
-  color: var(--white-70);
-  font-style: italic;
-}
-.example-toggle {
-  background: transparent;
-  border: 1px solid var(--border-green);
-  color: var(--green);
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 2px;
-  padding: 6px 14px;
-  cursor: pointer;
-  margin-bottom: 14px;
-  transition: background 0.2s;
-  width: 100%;
-  text-align: left;
-}
+.example-box { border: 1px solid var(--border-green); background: var(--green-08); padding: 18px; margin-bottom: 16px; }
+.example-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.example-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 3px; color: var(--green); text-transform: uppercase; }
+.example-score { font-family: var(--display); font-size: 1rem; font-weight: 700; color: var(--green); }
+.example-text { font-family: var(--body); font-size: 0.88rem; line-height: 1.75; color: var(--white-70); font-style: italic; }
+.example-toggle { background: transparent; border: 1px solid var(--border-green); color: var(--green); font-family: var(--mono); font-size: 0.62rem; letter-spacing: 2px; padding: 6px 14px; cursor: pointer; margin-bottom: 14px; transition: background 0.2s; width: 100%; text-align: left; }
 .example-toggle:hover { background: var(--green-08); }
+
+/* ── FOOTER ── */
+.site-footer { border-top: 1px solid var(--border); padding: 28px 24px; margin-top: 40px; }
+.site-footer-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 12px; }
+.footer-logo { width: 28px; height: 28px; opacity: 0.85; filter: drop-shadow(0 0 4px rgba(57,255,20,0.4)); }
+.footer-text { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 2px; color: var(--white-40); display: flex; align-items: center; gap: 6px; }
+.footer-heart { color: var(--green); font-size: 0.75rem; }
+.footer-name { color: var(--white-70); }
 
 /* ── MOBILE ── */
 @media (max-width: 480px) {
@@ -1062,410 +509,6 @@ html, body { background: var(--black); min-height: 100vh; }
   .stake-item { flex-direction: column; gap: 4px; }
   .stake-time { margin-left: 0; }
 }
-
-/* ── ONBOARDING ── */
-.onboard-screen {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 40px 0;
-}
-.onboard-hero {
-  text-align: center;
-  margin-bottom: 48px;
-}
-.onboard-logo {
-  font-family: var(--display);
-  font-size: 3rem;
-  font-weight: 900;
-  letter-spacing: 6px;
-  color: var(--green);
-  text-shadow: var(--glow-green);
-  margin-bottom: 10px;
-}
-.onboard-tagline {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 3px;
-  color: var(--white-40);
-  text-transform: uppercase;
-}
-.onboard-steps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 32px;
-}
-@media (max-width: 640px) {
-  .onboard-steps { grid-template-columns: 1fr; }
-  .onboard-logo { font-size: 2rem; letter-spacing: 3px; }
-}
-.onboard-step {
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 22px 18px;
-  position: relative;
-}
-.onboard-step-num {
-  font-family: var(--display);
-  font-size: 3rem;
-  font-weight: 900;
-  color: var(--green-08);
-  line-height: 1;
-  margin-bottom: 8px;
-}
-.onboard-step-title {
-  font-family: var(--display);
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: var(--white);
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-.onboard-step-body {
-  font-family: var(--body);
-  font-size: 0.85rem;
-  line-height: 1.7;
-  color: var(--white-70);
-}
-.onboard-step-accent {
-  color: var(--green);
-  font-weight: 600;
-}
-.onboard-scoring {
-  border: 1px solid var(--border-green);
-  background: var(--green-08);
-  padding: 22px;
-  margin-bottom: 28px;
-}
-.scoring-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-top: 14px;
-}
-@media (max-width: 480px) { .scoring-grid { grid-template-columns: 1fr; } }
-.scoring-item {
-  border: 1px solid var(--border);
-  background: var(--black);
-  padding: 12px 14px;
-}
-.scoring-item-label {
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 2px;
-  color: var(--green);
-  text-transform: uppercase;
-  margin-bottom: 5px;
-}
-.scoring-item-desc {
-  font-family: var(--body);
-  font-size: 0.82rem;
-  line-height: 1.6;
-  color: var(--white-70);
-}
-.onboard-verdicts {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-bottom: 28px;
-}
-@media (max-width: 480px) { .onboard-verdicts { grid-template-columns: 1fr; } }
-.onboard-verdict-item {
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 14px;
-  text-align: center;
-}
-.ov-stamp {
-  font-family: var(--display);
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 3px;
-  margin-bottom: 4px;
-}
-.ov-range {
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  color: var(--white-40);
-  margin-bottom: 6px;
-}
-.ov-desc {
-  font-family: var(--body);
-  font-size: 0.78rem;
-  line-height: 1.5;
-  color: var(--white-70);
-}
-.ov-green { color: var(--green); }
-.ov-white { color: var(--white-70); }
-.ov-red   { color: var(--red); }
-.onboard-start-btn {
-  width: 100%;
-  background: var(--green);
-  color: #000;
-  border: none;
-  font-family: var(--display);
-  font-size: 1.3rem;
-  font-weight: 900;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  padding: 20px;
-  cursor: pointer;
-  transition: opacity 0.2s, box-shadow 0.2s;
-}
-.onboard-start-btn:hover {
-  opacity: 0.9;
-  box-shadow: var(--glow-green);
-}
-.onboard-skip {
-  text-align: center;
-  margin-top: 14px;
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  color: var(--white-20);
-  cursor: pointer;
-  letter-spacing: 2px;
-}
-.onboard-skip:hover { color: var(--white-40); }
-
-/* ── SCORE BREAKDOWN ── */
-.score-breakdown {
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 20px;
-  margin-bottom: 12px;
-}
-.breakdown-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-top: 12px;
-}
-@media (max-width: 480px) { .breakdown-grid { grid-template-columns: 1fr; } }
-.breakdown-item {
-  border: 1px solid var(--border);
-  background: var(--black);
-  padding: 12px;
-}
-.bi-label {
-  font-family: var(--mono);
-  font-size: 0.58rem;
-  letter-spacing: 2px;
-  color: var(--white-40);
-  text-transform: uppercase;
-  margin-bottom: 4px;
-}
-.bi-desc {
-  font-family: var(--body);
-  font-size: 0.82rem;
-  line-height: 1.55;
-  color: var(--white-70);
-}
-.bi-tip {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  color: var(--green);
-  margin-top: 5px;
-}
-
-/* ── ONBOARDING ── */
-.onboard-screen {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 40px 0;
-}
-.onboard-hero {
-  text-align: center;
-  margin-bottom: 48px;
-}
-.onboard-logo {
-  font-family: var(--display);
-  font-size: 3rem;
-  font-weight: 900;
-  letter-spacing: 6px;
-  color: var(--green);
-  text-shadow: var(--glow-green);
-  display: block;
-  margin-bottom: 8px;
-}
-.onboard-tagline {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 3px;
-  color: var(--white-40);
-  text-transform: uppercase;
-}
-.onboard-steps {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 32px;
-}
-@media (max-width: 600px) {
-  .onboard-steps { grid-template-columns: 1fr; }
-  .onboard-logo { font-size: 2rem; }
-}
-.onboard-step {
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 20px;
-  position: relative;
-}
-.onboard-step-num {
-  font-family: var(--display);
-  font-size: 3rem;
-  font-weight: 900;
-  color: var(--green-20);
-  line-height: 1;
-  margin-bottom: 8px;
-}
-.onboard-step-title {
-  font-family: var(--display);
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: var(--white);
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-.onboard-step-text {
-  font-family: var(--body);
-  font-size: 0.88rem;
-  line-height: 1.7;
-  color: var(--white-70);
-}
-.onboard-step-text strong {
-  color: var(--green);
-  font-weight: 600;
-}
-.onboard-scoring {
-  border: 1px solid var(--border-green);
-  background: var(--green-08);
-  padding: 22px;
-  margin-bottom: 28px;
-}
-.onboard-scoring-title {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 3px;
-  color: var(--green);
-  text-transform: uppercase;
-  margin-bottom: 16px;
-}
-.scoring-criteria {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-@media (max-width: 500px) { .scoring-criteria { grid-template-columns: 1fr; } }
-.scoring-criterion {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-.sc-pct {
-  font-family: var(--display);
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: var(--green);
-  line-height: 1;
-  flex-shrink: 0;
-  width: 44px;
-}
-.sc-info {}
-.sc-label {
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 1.5px;
-  color: var(--white);
-  text-transform: uppercase;
-  margin-bottom: 3px;
-}
-.sc-desc {
-  font-family: var(--body);
-  font-size: 0.78rem;
-  line-height: 1.55;
-  color: var(--white-40);
-}
-.onboard-enter-btn {
-  width: 100%;
-  background: var(--green);
-  color: #000;
-  border: none;
-  font-family: var(--display);
-  font-size: 1.3rem;
-  font-weight: 900;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  padding: 20px;
-  cursor: pointer;
-  transition: opacity 0.2s, box-shadow 0.2s;
-}
-.onboard-enter-btn:hover {
-  opacity: 0.9;
-  box-shadow: var(--glow-green);
-}
-.onboard-skip {
-  text-align: center;
-  margin-top: 14px;
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 2px;
-  color: var(--white-20);
-  cursor: pointer;
-  transition: color 0.2s;
-}
-.onboard-skip:hover { color: var(--white-40); }
-
-/* ── SCORE BREAKDOWN ── */
-.score-breakdown {
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 20px;
-  margin-bottom: 12px;
-}
-.sb-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-top: 12px;
-}
-@media (max-width: 500px) { .sb-grid { grid-template-columns: 1fr; } }
-.sb-item {
-  border: 1px solid var(--border);
-  padding: 12px;
-  background: var(--black);
-}
-.sb-label {
-  font-family: var(--mono);
-  font-size: 0.58rem;
-  letter-spacing: 2px;
-  color: var(--white-40);
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-.sb-bar-wrap {
-  height: 3px;
-  background: var(--white-08);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-bottom: 6px;
-}
-.sb-bar {
-  height: 100%;
-  background: var(--green);
-  border-radius: 2px;
-}
-.sb-tip {
-  font-family: var(--body);
-  font-size: 0.75rem;
-  line-height: 1.5;
-  color: var(--white-40);
-}
 ```
 
   </style>
@@ -1473,7 +516,7 @@ html, body { background: var(--black); min-height: 100vh; }
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState, useEffect} = React;
+const { useState } = React;
 
 const RANKS = [
 {min:0,   label:“LURKER”},
@@ -1587,7 +630,7 @@ difficulty:“HARD”,odds:{confirm:22,deny:78},analysts:56210,daysOpen:40912},
 
 {id:“c09”,codename:“OPERATION MOCKINGBIRD”,category:“INTELLIGENCE / MEDIA”,urgency:“HIGH”,
 headline:“Hollywood and the CIA: Is Entertainment America’s Largest Psyop?”,
-brief:“Operation Mockingbird — the CIA’s documented 1950s–70s program to infiltrate American media — never officially ended. The CIA today operates a confirmed Entertainment Industry Liaison Office in LA. Top Gun: Maverick required Navy final-cut approval. Zero Dark Thirty depicted torture as effective — contradicting CIA’s own internal findings.”,
+brief:“Operation Mockingbird — the CIA’s documented 1950s-70s program to infiltrate American media — never officially ended. The CIA today operates a confirmed Entertainment Industry Liaison Office in LA. Top Gun: Maverick required Navy final-cut approval. Zero Dark Thirty depicted torture as effective — contradicting CIA’s own internal findings.”,
 evidence:[
 {label:“CIA Entertainment Liaison (Confirmed)”,note:“CIA’s Entertainment Industry Liaison Office publicly confirmed, based in Los Angeles. Former director Chase Brandon acknowledged offering filmmakers ‘guidance’ in exchange for access”},
 {label:“Top Gun: Maverick (Navy Approval)”,note:“Navy required final approval of all footage. Classified capability scenes deleted. Cast underwent Navy approval. Navy received formal ‘branding’ input”},
@@ -1616,7 +659,7 @@ evidence:[
 {label:“FBI FOIA Files (Released 2014)”,note:“FBI investigation files include multiple informants claiming Hitler survived. One 1945 report describes submarine arrival in Argentina. Files publicly available at vault.fbi.gov”},
 {label:“Soviet Skull Fragment DNA (2018)”,note:“University of Connecticut researchers tested the skull fragment Soviet archives claimed was Hitler’s. Published in European Journal of Archaeology: belongs to a woman, under 40. Hitler was 56”},
 {label:“Operation Paperclip (Declassified)”,note:“US State Dept / OSS program brought 1,600+ Nazi scientists to US including Wernher von Braun (NASA) — identities altered”},
-{label:“Vatican Ratlines (Argentine Files)”,note:“Vatican-issued travel documents facilitated Nazi escape routes. Argentine records show Perón’s government issued thousands of blank passports to ‘European immigrants’ 1946-1950”},
+{label:“Vatican Ratlines (Argentine Files)”,note:“Vatican-issued travel documents facilitated Nazi escape routes. Argentine records show Peron’s government issued thousands of blank passports to ‘European immigrants’ 1946-1950”},
 ],
 hypothesis:“Hitler did not die in the Berlin bunker — he escaped via submarine and Nazi ratlines to South America”,
 difficulty:“EXTREME”,odds:{confirm:18,deny:82},analysts:91020,daysOpen:29200},
@@ -1635,10 +678,10 @@ difficulty:“HARD”,odds:{confirm:38,deny:62},analysts:310240,daysOpen:229},
 
 {id:“c13”,codename:“MOON SHADOW”,category:“SPACE & DECEPTION”,urgency:“MEDIUM”,
 headline:“Did We Really Land on the Moon? The Unexplained Anomalies”,
-brief:“NASA admits the original high-resolution Apollo 11 telemetry tapes were erased and reused. The Van Allen radiation belt poses a documented hazard. Multiple photographic anomalies have been noted by engineers and film analysts. What actually happened on July 20, 1969?”,
+brief:“NASA admits the original high-resolution Apollo 11 telemetry tapes were erased and reused. The Van Allen radiation belt poses a documented hazard. Multiple photographic anomalies have been noted by engineers and film analysts.”,
 evidence:[
 {label:“NASA’s Missing Tapes”,note:“Original Apollo 11 telemetry tapes erased and reused. Only low-quality broadcast transfers remain. NASA’s own investigation confirmed the loss”},
-{label:“Flag Movement Footage”,note:“Flag appears to ripple in multiple sequences. NASA attributes this to the horizontal support rod and astronaut movement — footage remains disputed by physicists”},
+{label:“Flag Movement Footage”,note:“Flag appears to ripple in multiple sequences. NASA attributes this to the horizontal support rod and astronaut movement — footage remains disputed”},
 {label:“Radiation Belt Calculations”,note:“Van Allen belt traversal would have required significant shielding. Independent engineers have disputed whether the Apollo capsule’s shielding was sufficient”},
 {label:“Crosshair Anomalies”,note:“In multiple Hasselblad photographs, reticle crosshairs appear behind bright objects — suggesting possible composite processing of images”},
 ],
@@ -1659,7 +702,7 @@ difficulty:“HARD”,odds:{confirm:81,deny:19},analysts:12590,daysOpen:12783},
 
 {id:“c15”,codename:“TINY SINGULARITIES”,category:“PHYSICS & SECRECY”,urgency:“LOW”,
 headline:“CERN’s Micro Black Holes: Are They Already Here?”,
-brief:“CERN’s own safety reports acknowledge that micro black holes could theoretically be produced by the Large Hadron Collider. A US government budget document contained a line item referencing ‘stable microscopic singularity generation’ before being removed from public versions. Hawking radiation — the theoretical mechanism that would make micro black holes safe — has never been experimentally confirmed.”,
+brief:“CERN’s own safety reports acknowledge that micro black holes could theoretically be produced by the Large Hadron Collider. Hawking radiation — the theoretical mechanism that would make micro black holes safe — has never been experimentally confirmed.”,
 evidence:[
 {label:“CERN Safety Assessment”,note:“Official CERN safety documents acknowledge micro black hole production as theoretically possible. Safety conclusion rests on unverified Hawking radiation theory”},
 {label:“DARPA Budget Line Item”,note:“2019 budget document included ‘Stable microscopic singularity generation — Phase II’ before the line was removed from publicly released versions”},
@@ -1675,7 +718,7 @@ const STAKES = [
 {id:“s2”, label:“Cross-reference 3 independent journalism sources and write a 500-word analytical brief”, time:“~1.5 hrs”},
 {id:“s3”, label:“File a FOIA request for records directly related to this case”, time:“~30 min”},
 {id:“s4”, label:“Watch unedited source footage and produce a timestamped breakdown”, time:“~45 min”},
-{id:“s5”, label:“Build an entity relationship map using only public records”, time:“~3–4 hrs”},
+{id:“s5”, label:“Build an entity relationship map using only public records”, time:“~3-4 hrs”},
 ];
 
 const TERMINAL = [
@@ -1692,12 +735,8 @@ const TERMINAL = [
 
 const EXAMPLE_ANALYSES = {
 “c01”: {stance:“CONFIRM”,score:91,text:“The LLC Registry cross-reference is the strongest element here. Apex Structural sharing a registered agent with Hendricks Family Holdings isn’t coincidental — registered agents are specific legal designations. Combined with all three contractors donating to Hendricks’ PAC within 18 months of winning no-bid contracts, this creates a documentable conflict-of-interest chain. The 90-day incorporation window before bid deadline is telling: legitimate contractors don’t incorporate days before a major municipal bid. I confirm the hypothesis.”},
-“c02”: {stance:“CONFIRM”,score:88,text:“The methodology evidence is decisive. Using 278 of 847 EPA sites (33%) and selecting specifically the 6-week seasonal variation window — which EPA’s own footnotes acknowledge — isn’t accidental. That requires deliberate data selection. The SEC filing showing 12,000 undisclosed shares in Clearwater Solutions while writing a report that benefits Clearwater’s $12.2M contract bid is a textbook conflict of interest. Selective data AND financial stake together confirm motivated reasoning, not sloppy science.”},
-“c03”: {stance:“CONFIRM”,score:87,text:“The FOIA stonewalling is the critical signal. Three requests, 11 months, 8 months past the legal 30-day window — this is deliberate obstruction. The revolving door (Webb: TechCorp VP → FCC Deputy Director → oversees spectrum auction → TechCorp wins $2.8B) is documented in public records. The $4.1M lobbying spend targeting FCC spectrum policy while Webb was in his role completes the circle. The obstruction pattern implies there’s something in those documents worth hiding.”},
-“c05”: {stance:“CONFIRM”,score:94,text:“The BBC timestamp is the most independently verifiable anomaly. Jane Standley’s broadcast at 4:54 PM reporting WTC7’s collapse while WTC7 is visibly standing behind her is documented fact — the footage exists. NIST’s own lead investigator stated they ‘were not asked to look at’ controlled demolition, meaning the most obvious alternative hypothesis was excluded by design. The SEC records destruction — 3,000+ active Enron and WorldCom files — adds a documented beneficiary. These three elements are not adequately explained by the official account.”},
-“c07”: {stance:“CONFIRM”,score:92,text:“The Acosta statement is load-bearing evidence. ‘Belonged to intelligence’ is a specific institutional designation with legal implications. Acosta was a federal prosecutor who understood what he was saying — his resignation 10 days after the story broke confirms it. The MCC surveillance failure — both cameras AND both guards simultaneously — defies statistical probability. Maxwell’s conviction on 6 trafficking counts with zero co-conspirator charges at sentencing is prosecutorially extraordinary. These three documented facts create a coherent pattern of protection that continued after Epstein’s death.”},
-“c09”: {stance:“CONFIRM”,score:86,text:“The CIA Entertainment Liaison Office is publicly confirmed — the question is whether it constitutes Mockingbird continuation. Navy final-cut approval over Top Gun: Maverick is editorial control, not creative collaboration. The Senate Intelligence Committee found Zero Dark Thirty filmmakers received ‘inappropriate’ CIA access, and the film depicted torture as effective — contradicting CIA’s own internal assessments. The Church Committee confirmed 400+ journalist relationships in 1975. The program ‘ended’ with no verification mechanism. The infrastructure exists. The behavior matches.”},
-“c12”: {stance:“CONFIRM”,score:89,text:“The 91-minute gap is the central anomaly. Radio logs document the shooter as suspicious at 5:45 PM. Shot fired at 6:11 PM. Multiple officers communicated his position — this is not a communications failure. The counter-sniper testimony that they ‘could not engage’ while the shooter was being photographed by law enforcement on the same roof is an irreconcilable contradiction. Cheatle’s ‘most significant operational failure in decades’ followed by zero criminal referrals suggests the official response is designed to contain rather than explain.”},
+“c07”: {stance:“CONFIRM”,score:92,text:“The Acosta statement is load-bearing evidence. ‘Belonged to intelligence’ is a specific institutional designation with legal implications. Acosta was a federal prosecutor who understood what he was saying — his resignation 10 days after the story broke confirms it. The MCC surveillance failure — both cameras AND both guards simultaneously — defies statistical probability. Maxwell’s conviction on 6 trafficking counts with zero co-conspirator charges at sentencing is prosecutorially extraordinary.”},
+“c09”: {stance:“CONFIRM”,score:86,text:“The CIA Entertainment Liaison Office is publicly confirmed. Navy final-cut approval over Top Gun: Maverick is editorial control, not creative collaboration. The Senate Intelligence Committee found Zero Dark Thirty filmmakers received ‘inappropriate’ CIA access, and the film depicted torture as effective — contradicting CIA’s own internal assessments. The Church Committee confirmed 400+ journalist relationships in 1975. The infrastructure exists. The behavior matches.”},
 };
 
 const getExample = (caseId) => EXAMPLE_ANALYSES[caseId] || {
@@ -1723,35 +762,29 @@ conclusion: “Continue developing your investigative methodology to improve you
 }
 
 function App() {
-const [screen, setScreen]       = useState(“init”);
-const [vp, setVp]               = useState(0);
-const [debt, setDebt]           = useState(null);
+// ── FIX: initialize ALL state directly from localStorage (it’s synchronous)
+// so the correct screen renders on the very first paint — no blank flash
+const [vp, setVp]               = useState(() => parseInt(localStorage.getItem(“cg_vp”)) || 0);
+const [debt, setDebt]           = useState(() => { const d = localStorage.getItem(“cg_debt”); return d ? JSON.parse(d) : null; });
+const [apiKey, setApiKey]       = useState(() => localStorage.getItem(“cg_apikey”) || “”);
+const [onboarded, setOnboarded] = useState(() => localStorage.getItem(“cg_onboarded”) === “1”);  // FIX: only declare once
+
+const [screen, setScreen] = useState(() => {
+if (localStorage.getItem(“cg_debt”)) return “debt”;
+if (localStorage.getItem(“cg_onboarded”) !== “1”) return “onboard”;
+return “hub”;
+});
+
 const [sel, setSel]             = useState(null);
 const [stance, setStance]       = useState(null);
 const [reasoning, setReasoning] = useState(””);
 const [stake, setStake]         = useState(null);
 const [lines, setLines]         = useState([]);
 const [verdict, setVerdict]     = useState(null);
-const [apiKey, setApiKey]       = useState(””);
-const [apiInput, setApiInput]   = useState(””);
-const [showBanner, setShowBanner] = useState(false);
+const [apiInput, setApiInput]   = useState(() => localStorage.getItem(“cg_apikey”) || “”);
+const [showBanner, setShowBanner] = useState(() => !localStorage.getItem(“cg_apikey”));
 const [filter, setFilter]       = useState(“ALL”);
 const [showExample, setShowExample] = useState(false);
-const [onboarded, setOnboarded] = useState(false);
-const [onboarded, setOnboarded] = useState(false);
-
-useEffect(() => {
-const sv = parseInt(localStorage.getItem(“cg_vp”)) || 0;
-const ob = localStorage.getItem(“cg_onboarded”) === “1”;
-setOnboarded(ob);
-const sd = localStorage.getItem(“cg_debt”);
-const sk = localStorage.getItem(“cg_apikey”) || “”;
-setVp(sv); setApiKey(sk); setApiInput(sk);
-if (sd) { setDebt(JSON.parse(sd)); setScreen(“debt”); }
-else if (!ob) { setScreen(“onboard”); }
-else { setScreen(“hub”); }
-if (!sk) setShowBanner(true);
-}, []);
 
 const completeOnboard = () => {
 setOnboarded(true);
@@ -1791,7 +824,7 @@ Stance: ${stance.toUpperCase()}
 Reasoning: “${reasoning}”
 
 SCORING: 85-100=Exceptional | 65-84=Solid | 40-64=Adequate | 0-39=Insufficient
-VERDICT: score>=70→”VERIFIED” vpDelta=round((score-60)/2)capped30 | 40-69→”INSUFFICIENT” vpDelta=0 | <40→”REJECTED” vpDelta=-10
+VERDICT: score>=70 -> “VERIFIED” vpDelta=round((score-60)/2)capped30 | 40-69 -> “INSUFFICIENT” vpDelta=0 | <40 -> “REJECTED” vpDelta=-10
 
 Respond ONLY with valid JSON, no markdown:
 {“score”:<0-100>,“verdict”:“VERIFIED”|“INSUFFICIENT”|“REJECTED”,“summary”:”<2-3 sentences>”,“strengths”:[”<up to 2>”],“weaknesses”:[”<up to 2>”],“conclusion”:”<1 sentence>”,“vpDelta”:<number>}`}]
@@ -1799,7 +832,7 @@ Respond ONLY with valid JSON, no markdown:
 });
 const data = await res.json();
 parsed = JSON.parse(data.content.map(b => b.text||””).join(””).replace(/`json|`/g,””).trim());
-} catch { parsed = scoreLocally(reasoning, sel); }
+} catch(_) { parsed = scoreLocally(reasoning, sel); }
 } else { parsed = scoreLocally(reasoning, sel); }
 
 ```
@@ -1815,30 +848,18 @@ setVerdict(parsed); setLines([]); setScreen("verdict");
 const reset = () => { setSel(null); setStance(null); setReasoning(””); setStake(null); setVerdict(null); setLines([]); setScreen(“hub”); };
 const clearDebt = () => { rmDebt(); reset(); };
 
-const enterGame = () => {
-localStorage.setItem(“cg_onboarded”, “1”);
-setOnboarded(true);
-setScreen(“hub”);
-};
-
 const dc = d => d===“MODERATE” ? “diff-mod” : d===“HARD” ? “diff-hard” : “diff-ext”;
 const uc = u => u===“CRITICAL” ? “urg-critical” : u===“HIGH” ? “urg-high” : u===“MEDIUM” ? “urg-med” : “urg-low”;
 const canGo = !!(stance && reasoning.trim().length >= 30 && stake);
 const vl = verdict ? verdict.verdict.toLowerCase() : “verified”;
 const shown = filter === “ALL” ? CASES : CASES.filter(c => c.category === filter);
 
-if (screen === “init”) return (
-<div className="root">
-<div className="init-screen"><div className="blink-cur" /></div>
-</div>
-);
-
 return (
 <div className="root">
 {/* HEADER */}
 <div className="header">
 <div className="header-inner">
-<div className="logo-block">
+<div>
 <div className="logo" data-text="CONSPIRACY.GAME">CONSPIRACY.GAME</div>
 <span className="logo-sub">// CIVIC ENGINE — CROWDSOURCED INVESTIGATIVE PROTOCOL</span>
 </div>
@@ -1863,81 +884,6 @@ return (
     </div>
   )}
 
-
-  {/* ── ONBOARDING ── */}
-  {screen === "onboard" && (
-    <div className="wrap onboard-screen screen">
-      <div className="onboard-hero">
-        <div className="onboard-logo">CONSPIRACY.GAME</div>
-        <div className="onboard-tagline">Where belief meets proof · Gamifying the hunt for truth</div>
-      </div>
-
-      <div className="onboard-steps">
-        <div className="onboard-step">
-          <div className="onboard-step-num">01</div>
-          <div className="onboard-step-title">Pick a Case</div>
-          <div className="onboard-step-body">Choose from <span className="onboard-step-accent">15 live investigations</span> — each with a real evidence file, a specific hypothesis, and community odds from other analysts.</div>
-        </div>
-        <div className="onboard-step">
-          <div className="onboard-step-num">02</div>
-          <div className="onboard-step-title">Write Your Analysis</div>
-          <div className="onboard-step-body">Read the evidence. Take a stance. Write your reasoning — <span className="onboard-step-accent">citing specific evidence by name</span>. This is what gets evaluated, not your conclusion.</div>
-        </div>
-        <div className="onboard-step">
-          <div className="onboard-step-num">03</div>
-          <div className="onboard-step-title">Stake Something Real</div>
-          <div className="onboard-step-body">Before submitting, <span className="onboard-step-accent">stake a research task</span>. If your analysis is rejected, you owe that task — on the honor system — before continuing.</div>
-        </div>
-      </div>
-
-      <div className="onboard-scoring">
-        <div className="box-label">◆ How Your Analysis Gets Scored</div>
-        <div className="scoring-grid">
-          <div className="scoring-item">
-            <div className="scoring-item-label">Evidence Specificity</div>
-            <div className="scoring-item-desc">Do you name specific evidence items and explain why they matter? Vague references score low.</div>
-          </div>
-          <div className="scoring-item">
-            <div className="scoring-item-label">Logical Rigor</div>
-            <div className="scoring-item-desc">Does your reasoning follow a clear causal chain? Unsupported leaps are penalized.</div>
-          </div>
-          <div className="scoring-item">
-            <div className="scoring-item-label">Alternatives Considered</div>
-            <div className="scoring-item-desc">Did you acknowledge and address the strongest counter-explanation? Top analysts always do.</div>
-          </div>
-          <div className="scoring-item">
-            <div className="scoring-item-label">Grounded Conclusions</div>
-            <div className="scoring-item-desc">Does your conclusion follow from the evidence, or does it go beyond it? Stay within what the record shows.</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="onboard-verdicts">
-        <div className="onboard-verdict-item">
-          <div className="ov-stamp ov-green">VERIFIED</div>
-          <div className="ov-range">Score 70–100</div>
-          <div className="ov-desc">Earns Verification Power. Strong logic, specific evidence, considered alternatives.</div>
-        </div>
-        <div className="onboard-verdict-item">
-          <div className="ov-stamp ov-white">INSUFFICIENT</div>
-          <div className="ov-range">Score 40–69</div>
-          <div className="ov-desc">No penalty, no reward. Reasoning exists but lacks depth or specificity.</div>
-        </div>
-        <div className="onboard-verdict-item">
-          <div className="ov-stamp ov-red">REJECTED</div>
-          <div className="ov-range">Score 0–39</div>
-          <div className="ov-desc">Intellectual Debt recorded. Complete your staked task to unlock the platform.</div>
-        </div>
-      </div>
-
-      <button className="onboard-start-btn" onClick={completeOnboard}>
-        Begin Investigation →
-      </button>
-      <div className="onboard-skip" onClick={completeOnboard}>skip intro</div>
-    </div>
-  )}
-
-
   {/* ── ONBOARDING ── */}
   {screen === "onboard" && (
     <div className="wrap onboard-screen screen">
@@ -1945,7 +891,6 @@ return (
         <span className="onboard-logo">CONSPIRACY.GAME</span>
         <div className="onboard-tagline">Where belief meets proof // Gamifying the hunt for truth</div>
       </div>
-
       <div className="onboard-steps">
         <div className="onboard-step">
           <div className="onboard-step-num">01</div>
@@ -1968,43 +913,22 @@ return (
           <div className="onboard-step-text">AI evaluates the <strong>quality of your thinking</strong> — not whether you're right. Sharp, evidence-grounded analysis scores high. Vague assertions score low. Earn Verification Power.</div>
         </div>
       </div>
-
       <div className="onboard-scoring">
-        <div className="onboard-scoring-title">◆ How Your Analysis Is Scored</div>
+        <div className="onboard-scoring-title">How Your Analysis Is Scored</div>
         <div className="scoring-criteria">
-          <div className="scoring-criterion">
-            <div className="sc-pct">30%</div>
-            <div className="sc-info">
-              <div className="sc-label">Evidence Specificity</div>
-              <div className="sc-desc">Do you cite specific evidence items by name and explain why they matter?</div>
-            </div>
-          </div>
-          <div className="scoring-criterion">
-            <div className="sc-pct">30%</div>
-            <div className="sc-info">
-              <div className="sc-label">Logical Rigor</div>
-              <div className="sc-desc">Is your causal chain coherent? Does each step follow from the last?</div>
-            </div>
-          </div>
-          <div className="scoring-criterion">
-            <div className="sc-pct">20%</div>
-            <div className="sc-info">
-              <div className="sc-label">Alternatives Considered</div>
-              <div className="sc-desc">Do you acknowledge and address explanations that cut against your stance?</div>
-            </div>
-          </div>
-          <div className="scoring-criterion">
-            <div className="sc-pct">20%</div>
-            <div className="sc-info">
-              <div className="sc-label">Grounded Conclusion</div>
-              <div className="sc-desc">Does your verdict follow from the evidence you've cited, not just your prior beliefs?</div>
-            </div>
-          </div>
+          <div className="scoring-criterion"><div className="sc-pct">30%</div><div><div className="sc-label">Evidence Specificity</div><div className="sc-desc">Do you cite specific evidence items by name and explain why they matter?</div></div></div>
+          <div className="scoring-criterion"><div className="sc-pct">30%</div><div><div className="sc-label">Logical Rigor</div><div className="sc-desc">Is your causal chain coherent? Does each step follow from the last?</div></div></div>
+          <div className="scoring-criterion"><div className="sc-pct">20%</div><div><div className="sc-label">Alternatives Considered</div><div className="sc-desc">Do you acknowledge and address explanations that cut against your stance?</div></div></div>
+          <div className="scoring-criterion"><div className="sc-pct">20%</div><div><div className="sc-label">Grounded Conclusion</div><div className="sc-desc">Does your verdict follow from the evidence you've cited, not just your prior beliefs?</div></div></div>
         </div>
       </div>
-
-      <button className="onboard-enter-btn" onClick={enterGame}>Enter the Investigation →</button>
-      <div className="onboard-skip" onClick={enterGame}>skip intro</div>
+      <div className="onboard-verdicts">
+        <div className="onboard-verdict-item"><div className="ov-stamp ov-green">VERIFIED</div><div className="ov-range">Score 70-100</div><div className="ov-desc">Earns Verification Power. Strong logic, specific evidence, considered alternatives.</div></div>
+        <div className="onboard-verdict-item"><div className="ov-stamp ov-white">INSUFFICIENT</div><div className="ov-range">Score 40-69</div><div className="ov-desc">No penalty, no reward. Reasoning exists but lacks depth or specificity.</div></div>
+        <div className="onboard-verdict-item"><div className="ov-stamp ov-red">REJECTED</div><div className="ov-range">Score 0-39</div><div className="ov-desc">Intellectual Debt recorded. Complete your staked task to unlock the platform.</div></div>
+      </div>
+      <button className="onboard-enter-btn" onClick={completeOnboard}>Enter the Investigation →</button>
+      <div className="onboard-skip" onClick={completeOnboard}>skip intro</div>
     </div>
   )}
 
@@ -2012,7 +936,7 @@ return (
   {screen === "hub" && (
     <div className="wrap hub screen">
       <div className="hub-top">
-        <div className="section-eyebrow">◆ Active Investigations</div>
+        <div className="section-eyebrow">Active Investigations</div>
         <div className="hub-count">{shown.length} of {CASES.length} cases</div>
       </div>
       <div className="filter-bar">
@@ -2062,9 +986,8 @@ return (
           <span>Difficulty: {sel.difficulty}</span>
         </div>
       </div>
-
       <div className="evidence-box">
-        <div className="box-label">◆ Available Evidence</div>
+        <div className="box-label">Available Evidence</div>
         {sel.evidence.map((e,i) => (
           <div key={i} className="ev-row">
             <div className="ev-key">[ {e.label} ]</div>
@@ -2072,23 +995,14 @@ return (
           </div>
         ))}
       </div>
-
       <div className="odds-pair">
-        <div className="odds-box">
-          <div className="ob-label">Community: Confirm</div>
-          <div className={`ob-value ob-green`}>{sel.odds.confirm}%</div>
-        </div>
-        <div className="odds-box">
-          <div className="ob-label">Community: Deny</div>
-          <div className={`ob-value ob-red`}>{sel.odds.deny}%</div>
-        </div>
+        <div className="odds-box"><div className="ob-label">Community: Confirm</div><div className="ob-value ob-green">{sel.odds.confirm}%</div></div>
+        <div className="odds-box"><div className="ob-label">Community: Deny</div><div className="ob-value ob-red">{sel.odds.deny}%</div></div>
       </div>
-
       <div className="hyp-box">
-        <div className="box-label">◆ Hypothesis Under Investigation</div>
+        <div className="box-label">Hypothesis Under Investigation</div>
         <div className="hyp-quote">"{sel.hypothesis}"</div>
       </div>
-
       <button className="cta-btn" onClick={() => setScreen("analysis")}>File Your Analysis →</button>
     </div>
   )}
@@ -2097,17 +1011,15 @@ return (
   {screen === "analysis" && sel && (
     <div className="wrap analysis-screen screen">
       <button className="back-btn" onClick={() => setScreen("case")}>← Back to Case Brief</button>
-      <div className="screen-head">◆ Submit Analysis // {sel.codename}</div>
-
+      <div className="screen-head">Submit Analysis // {sel.codename}</div>
       <div className="hyp-box" style={{marginBottom:16}}>
         <div className="box-label">Hypothesis</div>
         <div className="hyp-quote">"{sel.hypothesis}"</div>
       </div>
-
-      {showExample && sel && (
+      {showExample && (
         <div className="example-box">
           <div className="example-header">
-            <span className="example-label">◆ Example High-Scoring Analysis</span>
+            <span className="example-label">Example High-Scoring Analysis</span>
             <span className="example-score">{getExample(sel.id).score}/100</span>
           </div>
           <div className="example-text">"{getExample(sel.id).text}"</div>
@@ -2116,13 +1028,11 @@ return (
       <button className="example-toggle" onClick={() => setShowExample(e => !e)}>
         {showExample ? "▲ Hide example analysis" : "▼ See what a high-scoring analysis looks like"}
       </button>
-
       <div style={{fontSize:"0.65rem",fontFamily:"var(--mono)",letterSpacing:"2.5px",color:"var(--white-40)",textTransform:"uppercase",marginBottom:10}}>Your Stance</div>
       <div className="stance-row">
         <button className={`stance-btn ${stance==="confirm"?"stance-confirm":""}`} onClick={() => setStance("confirm")}>✓ Confirm</button>
         <button className={`stance-btn ${stance==="deny"?"stance-deny":""}`} onClick={() => setStance("deny")}>✗ Deny</button>
       </div>
-
       <div style={{marginBottom:22}}>
         <div className="field-label">
           <span>Analytical Reasoning</span>
@@ -2132,23 +1042,18 @@ return (
           className="reasoning-area"
           value={reasoning}
           onChange={e => setReasoning(e.target.value)}
-          placeholder={`Explain your reasoning. Reference specific evidence items by name.\n\n"The LLC Registry cross-reference is the strongest element here because..." scores far higher than vague assertions.\n\nQuality beats length.`}
+          placeholder={"Explain your reasoning. Reference specific evidence items by name.\n\n\"The LLC Registry cross-reference is the strongest element here because...\" scores far higher than vague assertions.\n\nQuality beats length."}
         />
         <div className="char-row">
-          <span className={reasoning.length >= 150 ? "char-good" : ""}>
-            {reasoning.length} chars {reasoning.length < 100 ? "— aim for 150+" : reasoning.length < 200 ? "— getting there" : "— good depth"}
-          </span>
+          <span className={reasoning.length >= 150 ? "char-good" : ""}>{reasoning.length} chars {reasoning.length < 100 ? "— aim for 150+" : reasoning.length < 200 ? "— getting there" : "— good depth"}</span>
           <span>quality &gt; length</span>
         </div>
       </div>
-
       <div>
         <div className="stake-label-block">
-          <div className="field-label"><span>◆ Stake Your Research Labor</span></div>
+          <div className="field-label"><span>Stake Your Research Labor</span></div>
         </div>
-        <div className="stake-note">
-          Analysts who stake harder tasks signal real confidence. If your reasoning is REJECTED, you must complete this task before continuing.
-        </div>
+        <div className="stake-note">If your reasoning is REJECTED, you must complete this task before continuing.</div>
         {STAKES.map(s => (
           <div key={s.id} className={`stake-item ${stake?.id===s.id?"stake-selected":""}`} onClick={() => setStake(s)}>
             <span>{s.label}</span>
@@ -2156,7 +1061,6 @@ return (
           </div>
         ))}
       </div>
-
       <button className="submit-btn" onClick={submit} disabled={!canGo} style={{marginTop:20}}>
         {!stance ? "Select your stance first" :
          reasoning.trim().length < 30 ? "Add your reasoning to proceed" :
@@ -2192,84 +1096,36 @@ return (
           {verdict.vpDelta > 0 ? `+${verdict.vpDelta} VP Earned` : verdict.vpDelta < 0 ? `${verdict.vpDelta} VP Penalty` : "No VP Change"}
         </div>
       </div>
-
       <div className="verdict-card">
-        <div className="box-label">◆ Analytical Review</div>
+        <div className="box-label">Analytical Review</div>
         <div className="verdict-summary-text">{verdict.summary}</div>
       </div>
-
       <div className="score-breakdown">
-        <div className="box-label">◆ What Your Score Reflects</div>
+        <div className="box-label">What Your Score Reflects</div>
         <div className="breakdown-grid">
-          <div className="breakdown-item">
-            <div className="bi-label">Evidence Specificity</div>
-            <div className="bi-desc">Did you name evidence items directly and explain their significance?</div>
-            <div className="bi-tip">Tip: "The LLC Registry shows..." scores higher than "the records suggest..."</div>
-          </div>
-          <div className="breakdown-item">
-            <div className="bi-label">Logical Rigor</div>
-            <div className="bi-desc">Does your reasoning follow a clear causal chain without unsupported leaps?</div>
-            <div className="bi-tip">Tip: Trace A → B → C explicitly. Don't assume connections.</div>
-          </div>
-          <div className="breakdown-item">
-            <div className="bi-label">Alternatives Considered</div>
-            <div className="bi-desc">Did you acknowledge the strongest counter-explanation and address it?</div>
-            <div className="bi-tip">Tip: "One could argue X, but the evidence shows Y because..."</div>
-          </div>
-          <div className="breakdown-item">
-            <div className="bi-label">Grounded Conclusions</div>
-            <div className="bi-desc">Does your conclusion stay within what the available evidence actually shows?</div>
-            <div className="bi-tip">Tip: "The pattern is consistent with X" beats "This proves X."</div>
-          </div>
-        </div>
-      </div>
-
-
-
-      <div className="score-breakdown">
-        <div className="box-label">◆ Score Breakdown</div>
-        <div className="sb-grid">
-          <div className="sb-item">
-            <div className="sb-label">Evidence Specificity (30%)</div>
-            <div className="sb-bar-wrap"><div className="sb-bar" style={{width: `${Math.min(100, verdict.score + (verdict.score > 70 ? 5 : -10))}%`}} /></div>
-            <div className="sb-tip">Cite evidence items by name and explain their significance directly.</div>
-          </div>
-          <div className="sb-item">
-            <div className="sb-label">Logical Rigor (30%)</div>
-            <div className="sb-bar-wrap"><div className="sb-bar" style={{width: `${Math.min(100, verdict.score + (verdict.score > 65 ? 0 : -5))}%`}} /></div>
-            <div className="sb-tip">Each step of your argument should follow clearly from the last.</div>
-          </div>
-          <div className="sb-item">
-            <div className="sb-label">Alternatives Considered (20%)</div>
-            <div className="sb-bar-wrap"><div className="sb-bar" style={{width: `${Math.min(100, verdict.score - (verdict.score > 75 ? 0 : 15))}%`}} /></div>
-            <div className="sb-tip">Acknowledge explanations that cut against your stance — then address them.</div>
-          </div>
-          <div className="sb-item">
-            <div className="sb-label">Grounded Conclusion (20%)</div>
-            <div className="sb-bar-wrap"><div className="sb-bar" style={{width: `${Math.min(100, verdict.score + (verdict.score > 80 ? 5 : -8))}%`}} /></div>
-            <div className="sb-tip">Your verdict should follow from evidence cited, not prior beliefs.</div>
-          </div>
+          <div className="breakdown-item"><div className="bi-label">Evidence Specificity</div><div className="bi-desc">Did you name evidence items directly and explain their significance?</div><div className="bi-tip">Tip: "The LLC Registry shows..." scores higher than "the records suggest..."</div></div>
+          <div className="breakdown-item"><div className="bi-label">Logical Rigor</div><div className="bi-desc">Does your reasoning follow a clear causal chain without unsupported leaps?</div><div className="bi-tip">Tip: Trace A to B to C explicitly. Don't assume connections.</div></div>
+          <div className="breakdown-item"><div className="bi-label">Alternatives Considered</div><div className="bi-desc">Did you acknowledge the strongest counter-explanation and address it?</div><div className="bi-tip">Tip: "One could argue X, but the evidence shows Y because..."</div></div>
+          <div className="breakdown-item"><div className="bi-label">Grounded Conclusions</div><div className="bi-desc">Does your conclusion stay within what the available evidence actually shows?</div><div className="bi-tip">Tip: "The pattern is consistent with X" beats "This proves X."</div></div>
         </div>
       </div>
       <div className="sw-grid">
         <div className="sw-box">
-          <div className="sw-head sw-green">◆ Strengths</div>
+          <div className="sw-head sw-green">Strengths</div>
           {(verdict.strengths||[]).map((s,i) => <div key={i} className="sw-item">{s}</div>)}
         </div>
         <div className="sw-box">
-          <div className="sw-head sw-red">◆ Areas to Develop</div>
+          <div className="sw-head sw-red">Areas to Develop</div>
           {(verdict.weaknesses||[]).map((w,i) => <div key={i} className="sw-item">{w}</div>)}
         </div>
       </div>
-
       <div className="verdict-card" style={{marginBottom:12}}>
-        <div className="box-label">◆ Analyst Conclusion</div>
+        <div className="box-label">Analyst Conclusion</div>
         <div className="verdict-summary-text">{verdict.conclusion}</div>
       </div>
-
       {sel && (
         <div className="community-section">
-          <div className="box-label" style={{marginBottom:12}}>◆ How Other Analysts Approached This Case</div>
+          <div className="box-label" style={{marginBottom:12}}>How Other Analysts Approached This Case</div>
           <div className="community-analysis">
             <div className="ca-header">
               <span className="ca-analyst">ANALYST: VERIDIAN_7 <span className={`ca-stance ${getExample(sel.id).stance==="CONFIRM"?"ca-confirm":"ca-deny"}`}>{getExample(sel.id).stance}</span></span>
@@ -2286,7 +1142,6 @@ return (
           </div>
         </div>
       )}
-
       {verdict.verdict === "REJECTED" ? (
         <>
           <div style={{textAlign:"center",padding:"14px",fontFamily:"var(--mono)",fontSize:"0.7rem",letterSpacing:"2px",color:"var(--red)",border:"1px solid var(--red-20)",background:"var(--red-08)",marginBottom:12}}>
@@ -2305,14 +1160,10 @@ return (
     <div className="wrap debt-screen screen">
       <div className="debt-header">
         <div className="debt-title">Intellectual Debt</div>
-        <div className="debt-sub">
-          System locked // Case {debt.codename}<br/>
-          Your analysis did not meet the quality threshold.<br/>
-          Complete your staked research obligation to restore access.
-        </div>
+        <div className="debt-sub">System locked // Case {debt.codename}<br/>Your analysis did not meet the quality threshold.<br/>Complete your staked research obligation to restore access.</div>
       </div>
       <div className="debt-task">
-        <div className="debt-task-label">◆ Your Staked Research Obligation</div>
+        <div className="debt-task-label">Your Staked Research Obligation</div>
         <div className="debt-task-text">{debt.task}</div>
       </div>
       <div className="honor-text">
@@ -2323,36 +1174,27 @@ return (
       <button className="clear-btn" onClick={clearDebt}>✓ Research Task Completed — Unlock System</button>
     </div>
   )}
-{/* ── FOOTER ── */}
+
+  {/* ── FOOTER ── */}
   <div className="site-footer">
     <div className="site-footer-inner">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="32" height="32" class="footer-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="32" height="32" className="footer-logo">
+        <circle cx="50" cy="50" r="50" fill="#050505"/>
+        <circle cx="50" cy="50" r="44" fill="none" stroke="#39FF14" strokeWidth="3"/>
+        <circle cx="50" cy="50" r="28" fill="none" stroke="#39FF14" strokeWidth="2"/>
+        <line x1="4" y1="50" x2="96" y2="50" stroke="white" strokeWidth="2"/>
+        <line x1="50" y1="4" x2="50" y2="96" stroke="white" strokeWidth="2"/>
+        <line x1="36" y1="50" x2="64" y2="50" stroke="#050505" strokeWidth="2.5"/>
+        <line x1="50" y1="36" x2="50" y2="64" stroke="#050505" strokeWidth="2.5"/>
+        <circle cx="50" cy="50" r="4" fill="#39FF14"/>
+      </svg>
+      <div className="footer-text">Made with <span className="footer-heart">♥</span> by <span className="footer-name">Chas Goudie</span></div>
+    </div>
+  </div>
+</div>
 ```
 
-  <!-- Black background -->
-
-  <circle cx="50" cy="50" r="50" fill="#050505"/>
-  <!-- Outer green circle -->
-  <circle cx="50" cy="50" r="44" fill="none" stroke="#39FF14" stroke-width="3"/>
-  <!-- Inner green circle -->
-  <circle cx="50" cy="50" r="28" fill="none" stroke="#39FF14" stroke-width="2"/>
-  <!-- Horizontal crosshair line -->
-  <line x1="4" y1="50" x2="96" y2="50" stroke="white" stroke-width="2"/>
-  <!-- Vertical crosshair line -->
-  <line x1="50" y1="4" x2="50" y2="96" stroke="white" stroke-width="2"/>
-  <!-- Gap cuts (simulate crosshair gaps near center) -->
-  <line x1="36" y1="50" x2="64" y2="50" stroke="#050505" stroke-width="2.5"/>
-  <line x1="50" y1="36" x2="50" y2="64" stroke="#050505" stroke-width="2.5"/>
-  <!-- Center dot -->
-  <circle cx="50" cy="50" r="4" fill="#39FF14"/>
-</svg>
-          <div className="footer-text">
-            Made with <span className="footer-heart">♥</span> by <span className="footer-name">Chas Goudie</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+);
 }
 
 ReactDOM.createRoot(document.getElementById(“root”)).render(<App />);
