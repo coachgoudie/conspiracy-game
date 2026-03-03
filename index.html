@@ -5,172 +5,1082 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CONSPIRACY.GAME // CIVIC ENGINE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Share+Tech+Mono&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --bg:#07070F;--bg-card:#0C0C1C;--bg-hover:#111130;
-      --border:rgba(255,255,255,0.07);--border-lit:rgba(212,157,32,0.35);
-      --amber:#D49D20;--amber-bright:#E8B030;--amber-dim:rgba(212,157,32,0.12);
-      --red:#C42200;--red-bright:#E03020;--red-dim:rgba(196,34,0,0.12);
-      --green:#00A850;--green-bright:#00CC60;--green-dim:rgba(0,168,80,0.12);
-      --text:rgba(255,255,255,0.88);--text-mid:rgba(255,255,255,0.55);
-      --text-dim:rgba(255,255,255,0.28);--text-faint:rgba(255,255,255,0.14);
-      --mono:'Share Tech Mono','Courier New',monospace;
-      --serif:'Special Elite',Georgia,serif;
-      --display:'Bebas Neue',Impact,sans-serif;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #050505;
+      --card: #0F0F0F;
+      --card-hover: #161616;
+      --white: #F2F2F2;
+      --white-70: rgba(242,242,242,0.70);
+      --white-40: rgba(242,242,242,0.40);
+      --white-20: rgba(242,242,242,0.20);
+      --white-08: rgba(242,242,242,0.08);
+      --white-04: rgba(242,242,242,0.04);
+      --green: #39FF14;
+      --green-70: rgba(57,255,20,0.70);
+      --green-20: rgba(57,255,20,0.20);
+      --green-08: rgba(57,255,20,0.08);
+      --red: #FF3333;
+      --red-20: rgba(255,51,51,0.20);
+      --red-08: rgba(255,51,51,0.08);
+      --orange: #FF8C00;
+      --border: rgba(242,242,242,0.08);
+      --border-green: rgba(57,255,20,0.30);
+      --border-red: rgba(255,51,51,0.30);
+      --display: 'Barlow Condensed', 'Impact', sans-serif;
+      --body: 'DM Sans', 'Helvetica Neue', sans-serif;
+      --mono: 'IBM Plex Mono', 'Courier New', monospace;
+      --glow-green: 0 0 24px rgba(57,255,20,0.25);
+      --glow-red: 0 0 24px rgba(255,51,51,0.25);
     }
-    html,body{background:var(--bg);min-height:100vh}
-    .root{min-height:100vh;background:var(--bg);font-family:var(--mono);color:var(--text);position:relative;overflow-x:hidden}
-    .root::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.025) 3px,rgba(0,0,0,0.025) 4px)}
-    .root::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9997;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.6) 100%)}
-    .wrap{max-width:900px;margin:0 auto;padding:0 20px}
-    .screen{animation:fadeUp .35s ease both}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-    @keyframes glitch-a{0%,88%,100%{transform:translateX(0);opacity:0}90%{transform:translateX(3px);opacity:.65;clip-path:inset(10% 0 75% 0)}92%{transform:translateX(-3px);opacity:.65;clip-path:inset(35% 0 45% 0)}94%{opacity:0}}
-    @keyframes glitch-b{0%,88%,100%{transform:translateX(0);opacity:0}91%{transform:translateX(-3px);opacity:.65;clip-path:inset(65% 0 10% 0)}93%{transform:translateX(3px);opacity:.65;clip-path:inset(45% 0 35% 0)}95%{opacity:0}}
-    .header{padding:16px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-end;position:sticky;top:0;background:rgba(7,7,15,.95);backdrop-filter:blur(8px);z-index:100}
-    .logo{font-family:var(--display);font-size:1.5rem;letter-spacing:5px;color:var(--amber);position:relative;display:inline-block}
-    .logo::before{content:attr(data-text);position:absolute;top:0;left:2px;color:var(--red);clip-path:inset(20% 0 60% 0);animation:glitch-a 5s infinite;opacity:.65}
-    .logo::after{content:attr(data-text);position:absolute;top:0;left:-2px;color:#1166CC;clip-path:inset(60% 0 20% 0);animation:glitch-b 5s infinite;opacity:.65}
-    .logo-sub{font-size:.55rem;letter-spacing:2.5px;color:var(--text-dim);display:block;margin-top:3px}
-    .vp-block{text-align:right}
-    .vp-label{font-size:.55rem;letter-spacing:2.5px;color:var(--text-dim)}
-    .vp-num{font-family:var(--display);font-size:2rem;letter-spacing:3px;color:var(--amber-bright);line-height:1}
-    .api-banner{background:var(--amber-dim);border:1px solid var(--border-lit);padding:12px 20px;font-size:.72rem;color:var(--amber);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-    .api-input{background:var(--bg-card);border:1px solid var(--border-lit);color:var(--text);font-family:var(--mono);font-size:.72rem;padding:6px 10px;flex:1;min-width:220px}
-    .api-input:focus{outline:none;border-color:var(--amber)}
-    .api-save-btn{background:var(--amber);color:#000;border:none;font-family:var(--mono);font-size:.7rem;padding:6px 14px;cursor:pointer;letter-spacing:2px;white-space:nowrap}
-    .api-dismiss{color:var(--text-dim);cursor:pointer;font-size:.65rem;margin-left:auto}
-    .section-tag{font-size:.58rem;letter-spacing:3px;color:var(--amber)}
-    .box-label{font-size:.58rem;letter-spacing:3px;color:var(--amber);border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:12px}
-    .hub{padding:22px 0}
-    .hub-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-    .hub-divider{height:1px;background:var(--border);margin-bottom:18px}
-    .filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-    .filter-btn{background:transparent;border:1px solid var(--border);color:var(--text-dim);font-family:var(--mono);font-size:.58rem;letter-spacing:2px;padding:5px 10px;cursor:pointer;transition:all .2s}
-    .filter-btn:hover{border-color:var(--amber);color:var(--amber)}
-    .filter-active{border-color:var(--amber)!important;color:var(--amber)!important;background:var(--amber-dim)!important}
-    .case-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-    @media(max-width:620px){.case-grid{grid-template-columns:1fr}}
-    .case-card{border:1px solid var(--border);background:var(--bg-card);padding:18px;cursor:pointer;position:relative;transition:border-color .2s,background .2s;overflow:hidden}
-    .case-card::before{content:'';position:absolute;top:0;left:0;width:2px;height:100%;background:var(--amber);transform:scaleY(0);transition:transform .2s;transform-origin:bottom}
-    .case-card:hover{background:var(--bg-hover);border-color:var(--border-lit)}
-    .case-card:hover::before{transform:scaleY(1)}
-    .card-cat{font-size:.56rem;letter-spacing:3px;color:var(--amber);margin-bottom:4px}
-    .card-codename{font-family:var(--display);font-size:1rem;letter-spacing:3px;color:var(--text-dim);margin-bottom:5px}
-    .card-headline{font-family:var(--serif);font-size:.9rem;line-height:1.45;margin-bottom:14px}
-    .card-diff{position:absolute;top:14px;right:14px;font-size:.5rem;letter-spacing:2px;padding:2px 6px;border:1px solid}
-    .diff-mod{color:var(--amber);border-color:var(--amber)}
-    .diff-hard{color:#FF8800;border-color:#FF8800}
-    .diff-ext{color:var(--red);border-color:var(--red);animation:pulse 1.8s infinite}
-    .card-meta{display:flex;gap:14px;font-size:.63rem;color:var(--text-dim);margin-bottom:10px}
-    .odds-track{height:2px;background:rgba(196,34,0,.2);border-radius:1px;overflow:hidden}
-    .odds-fill{height:100%;background:var(--amber)}
-    .odds-labels{display:flex;justify-content:space-between;margin-top:4px;font-size:.58rem}
-    .lbl-confirm{color:var(--green-bright)}.lbl-deny{color:var(--red-bright)}
-    .hub-footer{text-align:center;padding:20px 0;font-size:.58rem;letter-spacing:2px;color:var(--text-faint);border-top:1px solid var(--border);margin-top:8px}
-    .back-btn{background:transparent;border:1px solid var(--border);color:var(--text-dim);font-family:var(--mono);font-size:.7rem;letter-spacing:2px;padding:6px 14px;cursor:pointer;margin-bottom:18px;transition:border-color .2s,color .2s;display:inline-block}
-    .back-btn:hover{border-color:var(--amber);color:var(--amber)}
-    .brief-screen{padding:20px 0}
-    .case-file{border:1px solid var(--border);background:var(--bg-card);padding:22px;margin-bottom:14px;position:relative}
-    .urgency-tag{position:absolute;top:18px;right:18px;font-size:.54rem;letter-spacing:2.5px;padding:3px 8px;border:1px solid}
-    .urg-low{color:var(--text-dim);border-color:var(--text-dim)}
-    .urg-med{color:var(--amber);border-color:var(--amber)}
-    .urg-high{color:#FF8800;border-color:#FF8800}
-    .urg-critical{color:var(--red-bright);border-color:var(--red-bright);animation:pulse 1.5s infinite}
-    .file-cat{font-size:.56rem;letter-spacing:3px;color:var(--amber);margin-bottom:6px}
-    .file-headline{font-family:var(--serif);font-size:1.4rem;line-height:1.3;margin-bottom:14px;padding-right:90px}
-    .file-brief{font-size:.82rem;line-height:1.75;color:rgba(255,255,255,.72);margin-bottom:18px}
-    .file-stats{display:flex;gap:18px;font-size:.63rem;color:var(--text-dim);border-top:1px solid var(--border);padding-top:12px;flex-wrap:wrap}
-    .evidence-box{border:1px solid var(--border);background:var(--bg-card);padding:18px;margin-bottom:14px}
-    .ev-row{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);font-size:.77rem}
-    .ev-row:last-child{border-bottom:none;padding-bottom:0}
-    .ev-key{color:var(--amber);min-width:175px;flex-shrink:0;line-height:1.5}
-    .ev-val{color:var(--text-mid);line-height:1.5}
-    @media(max-width:520px){.ev-row{flex-direction:column}.ev-key{min-width:unset}}
-    .odds-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-    .odds-box-item{border:1px solid var(--border);background:var(--bg-card);padding:14px;text-align:center}
-    .ob-label{font-size:.56rem;letter-spacing:2.5px;color:var(--text-dim);margin-bottom:6px}
-    .ob-value{font-family:var(--display);font-size:2.2rem;letter-spacing:2px;line-height:1}
-    .ob-green{color:var(--green-bright)}.ob-red{color:var(--red-bright)}
-    .hyp-box{border:1px solid var(--border);background:var(--bg-card);padding:16px;margin-bottom:18px}
-    .hyp-quote{font-family:var(--serif);font-size:1rem;line-height:1.55}
-    .cta-btn{width:100%;background:var(--amber);color:#000;border:none;font-family:var(--display);font-size:1.1rem;letter-spacing:5px;padding:16px;cursor:pointer;transition:background .2s}
-    .cta-btn:hover{background:var(--amber-bright)}
-    .analysis-screen{padding:20px 0}
-    .screen-head{font-size:.58rem;letter-spacing:3px;color:var(--amber);padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:18px}
-    .stance-toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
-    .stance-btn{background:transparent;border:1px solid var(--border);color:var(--text-dim);font-family:var(--display);font-size:1rem;letter-spacing:3px;padding:14px;cursor:pointer;transition:all .2s}
-    .stance-btn:hover{border-color:var(--text-mid);color:var(--text)}
-    .stance-confirm{background:var(--green-dim)!important;border-color:var(--green)!important;color:var(--green-bright)!important}
-    .stance-deny{background:var(--red-dim)!important;border-color:var(--red)!important;color:var(--red-bright)!important}
-    .area-label{display:flex;justify-content:space-between;align-items:center;font-size:.58rem;letter-spacing:2.5px;color:var(--amber);margin-bottom:8px}
-    .area-hint{color:var(--text-faint);letter-spacing:1px;font-size:.54rem}
-    .reasoning-input{width:100%;background:var(--bg-card);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.82rem;line-height:1.75;padding:16px;resize:vertical;min-height:150px;transition:border-color .2s}
-    .reasoning-input:focus{outline:none;border-color:var(--amber)}
-    .reasoning-input::placeholder{color:var(--text-faint)}
-    .char-bar{display:flex;justify-content:space-between;margin-top:5px;font-size:.6rem;color:var(--text-dim)}
-    .char-good{color:var(--green)}
-    .sub-label{font-size:.58rem;letter-spacing:3px;color:var(--amber);margin-bottom:8px}
-    .sub-note{font-size:.72rem;color:var(--text-dim);line-height:1.65;margin-bottom:10px}
-    .stake-row{border:1px solid var(--border);background:var(--bg-card);padding:13px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;margin-bottom:8px;transition:border-color .2s,background .2s;font-size:.78rem}
-    .stake-row:hover{border-color:var(--amber)}
-    .stake-selected{border-color:var(--amber)!important;background:var(--amber-dim)!important}
-    .stake-time{font-size:.62rem;color:var(--text-dim);margin-left:14px;white-space:nowrap}
-    .submit-btn{width:100%;background:transparent;border:1px solid var(--amber);color:var(--amber);font-family:var(--display);font-size:1rem;letter-spacing:4px;padding:16px;cursor:pointer;transition:background .2s,color .2s}
-    .submit-btn:hover:not([disabled]){background:var(--amber);color:#000}
-    .submit-btn[disabled]{border-color:var(--text-faint);color:var(--text-faint);cursor:not-allowed}
-    .loading-screen{display:flex;flex-direction:column;align-items:center;padding:70px 0}
-    .load-title{font-family:var(--display);font-size:1.3rem;letter-spacing:6px;color:var(--amber);margin-bottom:28px}
-    .term-line{font-size:.72rem;letter-spacing:1px;padding:3px 0;animation:fadeUp .3s ease both;width:100%;max-width:480px}
-    .t-ok{color:var(--green-bright)}.t-warn{color:#FF8800}.t-dim{color:var(--text-faint)}
-    .blink-cur{width:8px;height:18px;background:var(--amber);display:inline-block;margin-top:14px;animation:blink .8s step-start infinite}
-    .verdict-screen{padding:20px 0}
-    .verdict-frame{border-width:2px;border-style:solid;padding:26px;margin-bottom:16px;text-align:center}
-    .vf-verified{border-color:var(--green)}.vf-insufficient{border-color:var(--amber)}.vf-rejected{border-color:var(--red)}
-    .verdict-stamp{font-family:var(--display);font-size:2.8rem;letter-spacing:10px;display:block;margin-bottom:6px}
-    .vs-verified{color:var(--green-bright)}.vs-insufficient{color:var(--amber-bright)}.vs-rejected{color:var(--red-bright)}
-    .verdict-score{font-family:var(--display);font-size:5rem;letter-spacing:4px;line-height:1}
-    .score-verified{color:var(--green-bright)}.score-insufficient{color:var(--amber-bright)}.score-rejected{color:var(--red-bright)}
-    .score-sub{font-size:.58rem;letter-spacing:3px;color:var(--text-dim);margin:6px 0 10px}
-    .vp-delta{font-family:var(--display);font-size:1.1rem;letter-spacing:3px}
-    .delta-pos{color:var(--green-bright)}.delta-neg{color:var(--red-bright)}.delta-zero{color:var(--text-dim)}
-    .verdict-summary{border:1px solid var(--border);background:var(--bg-card);padding:18px;margin-bottom:14px;font-size:.82rem;line-height:1.75;color:rgba(255,255,255,.78)}
-    .sw-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-    @media(max-width:580px){.sw-grid{grid-template-columns:1fr}}
-    .sw-box{border:1px solid var(--border);background:var(--bg-card);padding:16px}
-    .sw-head{font-size:.56rem;letter-spacing:3px;margin-bottom:10px}
-    .sw-green{color:var(--green-bright)}.sw-red{color:var(--red-bright)}
-    .sw-item{font-size:.78rem;line-height:1.55;color:var(--text-mid);padding:6px 0;border-bottom:1px solid var(--border)}
-    .sw-item:last-child{border-bottom:none;padding-bottom:0}
-    .conclusion-box{border:1px solid var(--border);background:var(--bg-card);padding:18px;margin-bottom:20px}
-    .action-btn{width:100%;border:none;font-family:var(--display);font-size:1rem;letter-spacing:5px;padding:16px;cursor:pointer;transition:opacity .2s;margin-bottom:10px}
-    .action-btn:hover{opacity:.88}
-    .btn-amber{background:var(--amber);color:#000}.btn-red{background:var(--red);color:#fff}
-    .debt-screen{padding:20px 0}
-    .debt-header{border:2px solid var(--red);background:var(--red-dim);padding:24px;margin-bottom:16px;text-align:center}
-    .debt-title{font-family:var(--display);font-size:2rem;letter-spacing:7px;color:var(--red-bright);margin-bottom:10px}
-    .debt-sub{font-size:.72rem;color:rgba(255,255,255,.55);letter-spacing:1.5px;line-height:1.7}
-    .debt-task{border:1px solid var(--red);background:var(--bg-card);padding:20px;margin-bottom:16px}
-    .debt-task-label{font-size:.56rem;letter-spacing:3px;color:var(--red-bright);margin-bottom:10px}
-    .debt-task-text{font-family:var(--serif);font-size:1rem;line-height:1.65}
-    .honor-text{font-size:.68rem;color:var(--text-faint);line-height:1.75;text-align:center;padding:16px;border:1px dashed rgba(255,255,255,.1);margin-bottom:20px}
-    .clear-debt-btn{width:100%;background:transparent;border:1px solid var(--green);color:var(--green-bright);font-family:var(--display);font-size:1rem;letter-spacing:5px;padding:16px;cursor:pointer;transition:background .2s}
-    .clear-debt-btn:hover{background:var(--green-dim)}
+
+    html, body { background: var(--black); min-height: 100vh; }
+
+    .root {
+      min-height: 100vh;
+      background: var(--black);
+      font-family: var(--body);
+      font-size: 15px;
+      color: var(--white);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Subtle scanline */
+    .root::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 3px
+      );
+    }
+
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    .screen { animation: fadeUp 0.3s ease both; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-green {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+    @keyframes pulse-red {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+    @keyframes glitch-a {
+      0%,88%,100% { transform: translateX(0); opacity: 0; }
+      90%  { transform: translateX(3px); opacity: .5; clip-path: inset(15% 0 70% 0); }
+      92%  { transform: translateX(-2px); opacity: .5; clip-path: inset(40% 0 40% 0); }
+      94%  { opacity: 0; }
+    }
+    @keyframes glitch-b {
+      0%,88%,100% { transform: translateX(0); opacity: 0; }
+      91%  { transform: translateX(-3px); opacity: .5; clip-path: inset(60% 0 15% 0); }
+      93%  { transform: translateX(2px); opacity: .5; clip-path: inset(30% 0 50% 0); }
+      95%  { opacity: 0; }
+    }
+
+    /* ── HEADER ─────────────────────────────────────────── */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(5,5,5,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    .header-inner {
+      max-width: 960px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0;
+    }
+    .logo-block {}
+    .logo {
+      font-family: var(--display);
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: 4px;
+      color: var(--green);
+      position: relative;
+      display: inline-block;
+      line-height: 1;
+      text-shadow: var(--glow-green);
+    }
+    .logo::before {
+      content: attr(data-text);
+      position: absolute; top: 0; left: 2px;
+      color: var(--red);
+      clip-path: inset(15% 0 65% 0);
+      animation: glitch-a 6s infinite;
+      opacity: 0.5;
+    }
+    .logo::after {
+      content: attr(data-text);
+      position: absolute; top: 0; left: -2px;
+      color: #0066FF;
+      clip-path: inset(60% 0 15% 0);
+      animation: glitch-b 6s infinite;
+      opacity: 0.5;
+    }
+    .logo-sub {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 3px;
+      color: var(--white-40);
+      margin-top: 4px;
+    }
+    .vp-block { text-align: right; }
+    .vp-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      color: var(--white-40);
+      text-transform: uppercase;
+    }
+    .vp-row { display: flex; align-items: baseline; gap: 10px; justify-content: flex-end; margin-top: 2px; }
+    .vp-num {
+      font-family: var(--display);
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--green);
+      line-height: 1;
+      text-shadow: var(--glow-green);
+    }
+    .vp-rank {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--green-70);
+      border: 1px solid var(--green-20);
+      padding: 2px 7px;
+    }
+
+    /* ── API BANNER ─────────────────────────────────────── */
+    .api-banner {
+      background: var(--green-08);
+      border-bottom: 1px solid var(--border-green);
+      padding: 10px 24px;
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .api-banner-text {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--green-70);
+      flex-shrink: 0;
+    }
+    .api-input {
+      background: var(--black);
+      border: 1px solid var(--border-green);
+      color: var(--white);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 7px 12px;
+      flex: 1; min-width: 200px;
+    }
+    .api-input:focus { outline: none; border-color: var(--green); }
+    .api-save-btn {
+      background: var(--green);
+      color: #000;
+      border: none;
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      padding: 7px 16px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .api-save-btn:hover { opacity: 0.85; }
+    .api-dismiss {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--white-40);
+      cursor: pointer;
+      margin-left: auto;
+    }
+
+    /* ── SHARED ELEMENTS ────────────────────────────────── */
+    .section-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      color: var(--green);
+      text-transform: uppercase;
+    }
+    .box-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 3px;
+      color: var(--green);
+      text-transform: uppercase;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--white-40);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      padding: 8px 16px;
+      cursor: pointer;
+      margin-bottom: 24px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .back-btn:hover { border-color: var(--green); color: var(--green); }
+    .divider { height: 1px; background: var(--border); margin: 0 0 20px; }
+
+    /* ── HUB ────────────────────────────────────────────── */
+    .hub { padding: 28px 0; }
+    .hub-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .hub-count {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--white-40);
+      letter-spacing: 2px;
+    }
+    .filter-bar {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .filter-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--white-40);
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 1.5px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-transform: uppercase;
+    }
+    .filter-btn:hover { border-color: var(--white-20); color: var(--white-70); }
+    .filter-active {
+      border-color: var(--green) !important;
+      color: var(--green) !important;
+      background: var(--green-08) !important;
+    }
+
+    .case-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    @media (max-width: 640px) { .case-grid { grid-template-columns: 1fr; } }
+
+    .case-card {
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 20px;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.2s, background 0.2s;
+      overflow: hidden;
+    }
+    .case-card::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0;
+      width: 3px; height: 100%;
+      background: var(--green);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.25s ease;
+    }
+    .case-card:hover {
+      background: var(--card-hover);
+      border-color: var(--white-20);
+    }
+    .case-card:hover::after { transform: scaleY(1); }
+
+    .card-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 3px;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .card-codename {
+      font-family: var(--display);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--white-40);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .card-headline {
+      font-family: var(--display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--white);
+      margin-bottom: 16px;
+      padding-right: 60px;
+    }
+    .card-diff {
+      position: absolute;
+      top: 16px; right: 16px;
+      font-family: var(--mono);
+      font-size: 0.5rem;
+      letter-spacing: 2px;
+      padding: 3px 7px;
+      border: 1px solid;
+      text-transform: uppercase;
+    }
+    .diff-mod { color: var(--green); border-color: var(--green-20); }
+    .diff-hard { color: var(--orange); border-color: rgba(255,140,0,0.3); }
+    .diff-ext {
+      color: var(--red);
+      border-color: var(--red-20);
+      animation: pulse-red 2s infinite;
+    }
+    .card-meta {
+      display: flex; gap: 16px;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--white-40);
+      margin-bottom: 12px;
+    }
+    .odds-bar { height: 2px; background: var(--white-08); border-radius: 1px; overflow: hidden; }
+    .odds-fill { height: 100%; background: var(--green); transition: width 0.3s; }
+    .odds-labels {
+      display: flex; justify-content: space-between;
+      margin-top: 5px;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+    }
+    .lbl-confirm { color: var(--green); }
+    .lbl-deny { color: var(--red); }
+
+    .hub-footer {
+      text-align: center;
+      padding: 24px 0;
+      border-top: 1px solid var(--border);
+      margin-top: 12px;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 2.5px;
+      color: var(--white-20);
+      text-transform: uppercase;
+    }
+
+    /* ── CASE BRIEF ─────────────────────────────────────── */
+    .brief-screen { padding: 24px 0; }
+
+    .case-file {
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 28px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .urgency-tag {
+      position: absolute;
+      top: 20px; right: 20px;
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      letter-spacing: 2.5px;
+      padding: 4px 9px;
+      border: 1px solid;
+      text-transform: uppercase;
+    }
+    .urg-low   { color: var(--white-40); border-color: var(--white-20); }
+    .urg-med   { color: var(--white-70); border-color: var(--white-40); }
+    .urg-high  { color: var(--orange);   border-color: rgba(255,140,0,0.4); }
+    .urg-critical {
+      color: var(--red); border-color: var(--red-20);
+      animation: pulse-red 1.5s infinite;
+    }
+
+    .file-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .file-headline {
+      font-family: var(--display);
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--white);
+      margin-bottom: 18px;
+      padding-right: 100px;
+    }
+    .file-brief {
+      font-family: var(--body);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--white-70);
+      margin-bottom: 20px;
+    }
+    .file-stats {
+      display: flex; gap: 24px; flex-wrap: wrap;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--white-40);
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+
+    .evidence-box {
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 22px;
+      margin-bottom: 12px;
+    }
+    .ev-row {
+      display: flex; gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .ev-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .ev-key {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--green);
+      min-width: 190px;
+      flex-shrink: 0;
+      line-height: 1.6;
+    }
+    .ev-val {
+      font-family: var(--body);
+      font-size: 0.88rem;
+      color: var(--white-70);
+      line-height: 1.65;
+    }
+    @media (max-width: 540px) {
+      .ev-row { flex-direction: column; }
+      .ev-key { min-width: unset; }
+    }
+
+    .odds-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .odds-box {
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 18px;
+      text-align: center;
+    }
+    .ob-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 2.5px;
+      color: var(--white-40);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .ob-value {
+      font-family: var(--display);
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .ob-green { color: var(--green); text-shadow: var(--glow-green); }
+    .ob-red   { color: var(--red);   text-shadow: var(--glow-red); }
+
+    .hyp-box {
+      border: 1px solid var(--border-green);
+      background: var(--green-08);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .hyp-quote {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--white);
+    }
+
+    .cta-btn {
+      width: 100%;
+      background: var(--green);
+      color: #000;
+      border: none;
+      font-family: var(--display);
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      padding: 18px;
+      cursor: pointer;
+      transition: opacity 0.2s, box-shadow 0.2s;
+    }
+    .cta-btn:hover { opacity: 0.9; box-shadow: var(--glow-green); }
+
+    /* ── ANALYSIS ────────────────────────────────────────── */
+    .analysis-screen { padding: 24px 0; }
+    .screen-head {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      color: var(--green);
+      text-transform: uppercase;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 22px;
+    }
+
+    .stance-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
+    .stance-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--white-40);
+      font-family: var(--display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      padding: 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .stance-btn:hover { border-color: var(--white-20); color: var(--white); }
+    .stance-confirm {
+      background: var(--green-08) !important;
+      border-color: var(--green) !important;
+      color: var(--green) !important;
+    }
+    .stance-deny {
+      background: var(--red-08) !important;
+      border-color: var(--red) !important;
+      color: var(--red) !important;
+    }
+
+    .field-label {
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 2.5px;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .field-hint {
+      font-size: 0.58rem;
+      letter-spacing: 1.5px;
+      color: var(--white-20);
+    }
+    .reasoning-area {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-family: var(--body);
+      font-size: 0.95rem;
+      line-height: 1.75;
+      padding: 18px;
+      resize: vertical;
+      min-height: 160px;
+      transition: border-color 0.2s;
+    }
+    .reasoning-area:focus { outline: none; border-color: var(--green); }
+    .reasoning-area::placeholder { color: var(--white-20); }
+    .char-row {
+      display: flex; justify-content: space-between;
+      margin-top: 6px;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--white-40);
+    }
+    .char-good { color: var(--green); }
+
+    .stake-label-block { margin: 22px 0 10px; }
+    .stake-note {
+      font-family: var(--body);
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: var(--white-40);
+      margin-bottom: 12px;
+    }
+    .stake-item {
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 14px 18px;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: border-color 0.2s, background 0.2s;
+      font-family: var(--body);
+      font-size: 0.9rem;
+      color: var(--white-70);
+    }
+    .stake-item:hover { border-color: var(--white-20); }
+    .stake-selected {
+      border-color: var(--green) !important;
+      background: var(--green-08) !important;
+      color: var(--white) !important;
+    }
+    .stake-time {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--white-40);
+      margin-left: 16px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--green);
+      color: var(--green);
+      font-family: var(--display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      padding: 18px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      margin-top: 4px;
+    }
+    .submit-btn:hover:not([disabled]) {
+      background: var(--green);
+      color: #000;
+      box-shadow: var(--glow-green);
+    }
+    .submit-btn[disabled] {
+      border-color: var(--white-08);
+      color: var(--white-20);
+      cursor: not-allowed;
+    }
+
+    /* ── LOADING ─────────────────────────────────────────── */
+    .loading-screen {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 80px 0;
+    }
+    .load-title {
+      font-family: var(--display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 8px;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 36px;
+      text-shadow: var(--glow-green);
+    }
+    .term-line {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      padding: 4px 0;
+      animation: fadeUp 0.3s ease both;
+      width: 100%;
+      max-width: 500px;
+      line-height: 1.6;
+    }
+    .t-ok   { color: var(--green); }
+    .t-warn { color: var(--orange); }
+    .t-dim  { color: var(--white-20); }
+    .blink-cur {
+      width: 10px; height: 20px;
+      background: var(--green);
+      display: inline-block;
+      margin-top: 18px;
+      animation: blink 0.8s step-start infinite;
+      box-shadow: var(--glow-green);
+    }
+
+    /* ── VERDICT ─────────────────────────────────────────── */
+    .verdict-screen { padding: 24px 0; }
+    .verdict-frame {
+      border-width: 2px;
+      border-style: solid;
+      padding: 36px 28px;
+      margin-bottom: 14px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .vf-verified {
+      border-color: var(--green);
+      background: var(--green-08);
+    }
+    .vf-insufficient {
+      border-color: var(--white-20);
+      background: var(--white-04);
+    }
+    .vf-rejected {
+      border-color: var(--red);
+      background: var(--red-08);
+    }
+
+    .verdict-stamp {
+      font-family: var(--display);
+      font-size: 3.5rem;
+      font-weight: 900;
+      letter-spacing: 12px;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+    .vs-verified    { color: var(--green); text-shadow: var(--glow-green); }
+    .vs-insufficient { color: var(--white-70); }
+    .vs-rejected    { color: var(--red); text-shadow: var(--glow-red); }
+
+    .verdict-score {
+      font-family: var(--display);
+      font-size: 7rem;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+    .score-verified    { color: var(--green); text-shadow: var(--glow-green); }
+    .score-insufficient { color: var(--white-70); }
+    .score-rejected    { color: var(--red); text-shadow: var(--glow-red); }
+
+    .score-sub {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 3px;
+      color: var(--white-40);
+      margin: 8px 0 14px;
+      text-transform: uppercase;
+    }
+    .vp-delta {
+      font-family: var(--display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+    }
+    .delta-pos  { color: var(--green); }
+    .delta-neg  { color: var(--red); }
+    .delta-zero { color: var(--white-40); }
+
+    .verdict-card {
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+    .verdict-summary-text {
+      font-family: var(--body);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--white-70);
+    }
+
+    .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    @media (max-width: 580px) { .sw-grid { grid-template-columns: 1fr; } }
+    .sw-box { border: 1px solid var(--border); background: var(--card); padding: 18px; }
+    .sw-head {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .sw-green { color: var(--green); }
+    .sw-red   { color: var(--red); }
+    .sw-item {
+      font-family: var(--body);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--white-70);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .sw-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .action-btn {
+      width: 100%;
+      border: none;
+      font-family: var(--display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      padding: 18px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-bottom: 10px;
+    }
+    .action-btn:hover { opacity: 0.88; }
+    .btn-green { background: var(--green); color: #000; }
+    .btn-red   { background: var(--red);   color: #fff; }
+
+    /* ── DEBT ────────────────────────────────────────────── */
+    .debt-screen { padding: 24px 0; }
+    .debt-header {
+      border: 2px solid var(--red);
+      background: var(--red-08);
+      padding: 32px;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+    .debt-title {
+      font-family: var(--display);
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: 10px;
+      color: var(--red);
+      text-transform: uppercase;
+      text-shadow: var(--glow-red);
+      margin-bottom: 12px;
+    }
+    .debt-sub {
+      font-family: var(--body);
+      font-size: 0.92rem;
+      line-height: 1.75;
+      color: var(--white-70);
+    }
+    .debt-task {
+      border: 1px solid var(--red-20);
+      background: var(--card);
+      padding: 24px;
+      margin-bottom: 14px;
+    }
+    .debt-task-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 3px;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .debt-task-text {
+      font-family: var(--body);
+      font-size: 1rem;
+      line-height: 1.75;
+      color: var(--white);
+    }
+    .honor-text {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      line-height: 1.85;
+      color: var(--white-40);
+      text-align: center;
+      padding: 20px;
+      border: 1px dashed var(--white-08);
+      margin-bottom: 22px;
+    }
+    .clear-btn {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--green);
+      color: var(--green);
+      font-family: var(--display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      padding: 18px;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .clear-btn:hover { background: var(--green-08); box-shadow: var(--glow-green); }
+
+    /* ── INIT ────────────────────────────────────────────── */
+    .init-screen {
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh;
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      margin-top: 40px;
+    }
+    .site-footer-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .footer-logo {
+      width: 28px;
+      height: 28px;
+      opacity: 0.85;
+      filter: drop-shadow(0 0 4px rgba(57,255,20,0.4));
+    }
+    .footer-text {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--white-40);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .footer-heart {
+      color: var(--green);
+      font-size: 0.75rem;
+    }
+    .footer-name {
+      color: var(--white-70);
+    }
+
+    .community-section { margin-bottom: 14px; }
+    .community-analysis {
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 18px;
+      margin-bottom: 8px;
+    }
+    .ca-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .ca-analyst {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 2px;
+      color: var(--green);
+    }
+    .ca-score {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .ca-stance {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 2px;
+      padding: 2px 8px;
+      border: 1px solid;
+      margin-left: 10px;
+    }
+    .ca-confirm { color: var(--green); border-color: var(--green-20); }
+    .ca-deny    { color: var(--red);   border-color: var(--red-20); }
+    .ca-text {
+      font-family: var(--body);
+      font-size: 0.88rem;
+      line-height: 1.75;
+      color: var(--white-70);
+    }
+
+    /* ── EXAMPLE BOX ── */
+    .example-box {
+      border: 1px solid var(--border-green);
+      background: var(--green-08);
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    .example-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .example-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      color: var(--green);
+      text-transform: uppercase;
+    }
+    .example-score {
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .example-text {
+      font-family: var(--body);
+      font-size: 0.88rem;
+      line-height: 1.75;
+      color: var(--white-70);
+      font-style: italic;
+    }
+    .example-toggle {
+      background: transparent;
+      border: 1px solid var(--border-green);
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 2px;
+      padding: 6px 14px;
+      cursor: pointer;
+      margin-bottom: 14px;
+      transition: background 0.2s;
+      width: 100%;
+      text-align: left;
+    }
+    .example-toggle:hover { background: var(--green-08); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 480px) {
+      .logo { font-size: 1.2rem; letter-spacing: 2px; }
+      .logo-sub { font-size: 0.5rem; letter-spacing: 1.5px; }
+      .vp-num { font-size: 1.8rem; }
+      .file-headline { font-size: 1.4rem; padding-right: 0; }
+      .urgency-tag { position: static; display: inline-block; margin-bottom: 10px; }
+      .card-headline { font-size: 1.1rem; padding-right: 50px; }
+      .verdict-score { font-size: 5rem; }
+      .verdict-stamp { font-size: 2.5rem; letter-spacing: 6px; }
+      .debt-title { font-size: 2rem; letter-spacing: 5px; }
+      .ob-value { font-size: 2.2rem; }
+      .header-inner { padding: 10px 0; }
+      .wrap { padding: 0 16px; }
+      .case-file { padding: 18px; }
+      .evidence-box { padding: 16px; }
+      .hub { padding: 18px 0; }
+      .file-stats { gap: 12px; }
+      .stake-item { flex-direction: column; gap: 4px; }
+      .stake-time { margin-left: 0; }
+    }
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState,useEffect}=React;
+const {useState, useEffect} = React;
 
-const CASES=[
+const RANKS = [
+  {min:0,   label:"LURKER"},
+  {min:50,  label:"ROOKIE"},
+  {min:150, label:"SLEUTH"},
+  {min:350, label:"FIREKEEPER"},
+  {min:700, label:"ORACLE"},
+];
+const getRank = vp => {
+  let r = RANKS[0];
+  for (const rank of RANKS) { if (vp >= rank.min) r = rank; }
+  return r.label;
+};
+
+const CASES = [
   {id:"c01",codename:"OPERATION ZINC",category:"MUNICIPAL FINANCE",urgency:"HIGH",
    headline:"City Budget: 23% Allocated to Shell Contractors?",
    brief:"Anonymous tip from inside City Hall: the newly approved $4.2M infrastructure renovation budget allocated nearly a quarter of funds to three contractors who won no-bid contracts. Two firms incorporated less than 90 days before the bid deadline. One shares a registered agent with a holding company connected to Council Member Hendricks.",
@@ -197,7 +1107,7 @@ const CASES=[
 
   {id:"c03",codename:"REVOLVING DOOR",category:"REGULATORY CAPTURE",urgency:"CRITICAL",
    headline:"TechCorp & FCC: Direct Coordination During $2.8B Spectrum Auction?",
-   brief:"Marcus Webb, former TechCorp VP of Government Affairs, joined the FCC as Deputy Director 14 months ago. TechCorp then won 3 of 4 contested spectrum bands worth $2.8B. Three FOIA requests for communications between TechCorp's lobby arm and Webb's office have been pending 11+ months — exceeding legal windows by 8 months.",
+   brief:"Marcus Webb, former TechCorp VP of Government Affairs, joined the FCC as Deputy Director 14 months ago. TechCorp then won 3 of 4 contested spectrum bands worth $2.8B. Three FOIA requests have been pending 11+ months — exceeding legal windows by 8 months.",
    evidence:[
      {label:"FCC Personnel Records",note:"Webb joined FCC 14 months ago. Directly managed 'spectrum allocation policy' division"},
      {label:"FOIA Requests #2024-0891-0901",note:"Filed Nov 2023. All three exceed 30-day legal response window by 8 months"},
@@ -221,215 +1131,236 @@ const CASES=[
 
   {id:"c05",codename:"OPERATION FREEFALL",category:"NATIONAL SECURITY",urgency:"CRITICAL",
    headline:"WTC 7: How Did a 47-Story Steel Building Collapse Without Being Hit?",
-   brief:"At 5:20 PM on September 11, 2001, World Trade Center Building 7 — a 47-story steel-frame skyscraper — collapsed into its own footprint in 6.5 seconds. No plane struck it. FEMA's report called the cause 'unknown.' NIST's 7-year investigation concluded it was the first steel-frame high-rise in history to collapse due to office fires alone. BBC reported the collapse 26 minutes before it happened. SEC investigation files for Enron, WorldCom, and Goldman Sachs — stored in WTC7 — were destroyed.",
+   brief:"At 5:20 PM on September 11, 2001, World Trade Center Building 7 collapsed into its own footprint in 6.5 seconds. No plane struck it. FEMA's report called the cause 'unknown.' NIST's 7-year investigation concluded it was the first steel-frame high-rise in history to collapse due to office fires alone. BBC reported the collapse 26 minutes before it happened.",
    evidence:[
-     {label:"NIST Final Report (2008)",note:"7-year investigation concluded 'thermal expansion' caused collapse — the first such event in structural engineering history. Lead investigator stated 'we were not asked to look at' controlled demolition"},
-     {label:"BBC Broadcast Timestamp",note:"BBC's Jane Standley reported WTC7's collapse at 4:54 PM EST — 26 minutes before actual collapse. WTC7 was visible standing behind her during the broadcast"},
+     {label:"NIST Final Report (2008)",note:"7-year investigation concluded 'thermal expansion' caused collapse — first such event in structural engineering history. Lead investigator stated 'we were not asked to look at' controlled demolition"},
+     {label:"BBC Broadcast Timestamp",note:"BBC reported WTC7's collapse at 4:54 PM EST — 26 minutes before actual collapse at 5:20 PM. WTC7 was visible standing behind reporter during broadcast"},
      {label:"SEC Records Destruction",note:"3,000+ active SEC investigation files destroyed — including Enron and WorldCom cases. Multiple investigations subsequently settled or dropped"},
-     {label:"Silverstein Statement (PBS 2002)",note:"'We've had such terrible loss of life, maybe the smartest thing to do is pull it.' 'Pull it' is standard controlled demolition terminology"},
+     {label:"Silverstein Statement (PBS 2002)",note:"'Maybe the smartest thing to do is pull it.' 'Pull it' is standard controlled demolition terminology"},
    ],
    hypothesis:"WTC 7's collapse was a controlled demolition — making it the first steel-frame high-rise fire collapse in structural engineering history, if the official account is accurate",
    difficulty:"EXTREME",odds:{confirm:41,deny:59},analysts:128470,daysOpen:8534},
 
   {id:"c06",codename:"GHOST FLIGHT",category:"AVIATION INTELLIGENCE",urgency:"MEDIUM",
    headline:"MH370: Did the World's Largest Manhunt Find Nothing on Purpose?",
-   brief:"Malaysia Airlines Flight MH370 disappeared March 8, 2014 with 239 passengers. The transponder was manually disabled. Military radar tracked a deliberate U-turn back across Malaysia, then 7 more hours of flight. A $180M search of 120,000 km² found nothing for three years. Debris then appeared on beaches — but independent drift models suggest it couldn't have originated from the official crash zone.",
+   brief:"Malaysia Airlines Flight MH370 disappeared March 8, 2014 with 239 passengers. The transponder was manually disabled. Military radar tracked a deliberate U-turn, then 7 more hours of flight. A $180M search of 120,000 km² found nothing for three years. Independent drift models suggest debris couldn't have originated from the official crash zone.",
    evidence:[
-     {label:"Malaysian Military Radar",note:"Confirmed deliberate course reversal. Transponder disabled at 1:21 AM — the exact moment of handoff between Malaysian and Vietnamese ATC"},
+     {label:"Malaysian Military Radar",note:"Confirmed deliberate course reversal. Transponder disabled at 1:21 AM — exact moment of handoff between Malaysian and Vietnamese ATC"},
      {label:"Inmarsat Satellite Data",note:"7 'handshakes' tracked plane until 8:19 AM. Southern Indian Ocean conclusion disputed by independent aviation experts including Boeing analysts"},
      {label:"Diego Garcia Proximity",note:"One published trajectory places the plane within range of the classified US-UK military base with a 12,000ft runway — not included in official search zones"},
-     {label:"Debris Drift Analysis",note:"Flaperon confirmed as MH370. Independent oceanographic drift models indicate it could not have originated from the official crash zone — currents flow the wrong direction"},
+     {label:"Debris Drift Analysis",note:"Flaperon confirmed as MH370. Independent oceanographic drift models indicate it could not have originated from the official crash zone"},
    ],
    hypothesis:"MH370 did not crash where the official search suggests — the search zone was deliberately misdirected",
    difficulty:"EXTREME",odds:{confirm:33,deny:67},analysts:82340,daysOpen:3978},
 
   {id:"c07",codename:"THE LIST",category:"POLITICAL INTELLIGENCE",urgency:"CRITICAL",
    headline:"Epstein Files: Why Have Zero Co-Conspirators Been Charged?",
-   brief:"Jeffrey Epstein ran a documented trafficking operation for decades. His 2008 non-prosecution agreement's lead prosecutor Alex Acosta told Trump's transition team Epstein 'belonged to intelligence' and he was told to 'leave it alone.' After his 2019 arrest: both cell cameras malfunctioned, both guards fell asleep simultaneously, and Epstein died. Ghislaine Maxwell was convicted of trafficking — but prosecutors announced no plans to pursue her clients. The full client list remains sealed.",
+   brief:"Jeffrey Epstein ran a documented trafficking operation for decades. His 2008 non-prosecution agreement's lead prosecutor Alex Acosta told Trump's transition team Epstein 'belonged to intelligence' and he was told to 'leave it alone.' After his 2019 arrest both cell cameras malfunctioned, both guards fell asleep simultaneously, and Epstein died. The full client list remains sealed.",
    evidence:[
-     {label:"Alex Acosta Statement (2019)",note:"Acosta told Trump transition officials Epstein 'belonged to intelligence' and was told to 'leave it alone.' Reported by Daily Beast. Acosta resigned as Labor Secretary 10 days after story broke"},
+     {label:"Alex Acosta Statement (2019)",note:"Acosta told Trump transition officials Epstein 'belonged to intelligence' and was told to 'leave it alone.' Acosta resigned as Labor Secretary 10 days after story broke"},
      {label:"MCC Surveillance Failure",note:"Both cameras outside Epstein's cell malfunctioned simultaneously. Both guards fell asleep on same shift. DOJ IG found 'no evidence of foul play' despite the video failure"},
-     {label:"Maxwell Prosecution Statement",note:"Prosecutor at Maxwell's sentencing: 'The government has no plans to charge co-conspirators at this time.' Maxwell convicted on 6 counts including sex trafficking of minors"},
-     {label:"Unsealed Deposition (Jan 2024)",note:"Virginia Giuffre deposition names Prince Andrew, Alan Dershowitz, Bill Richardson, and others. Jean-Luc Brunel died in French prison 2022 while awaiting trial — no US charges followed"},
+     {label:"Maxwell Prosecution Statement",note:"Prosecutor at sentencing: 'The government has no plans to charge co-conspirators at this time.' Maxwell convicted on 6 counts including sex trafficking of minors"},
+     {label:"Unsealed Deposition (Jan 2024)",note:"Virginia Giuffre deposition names multiple figures. Jean-Luc Brunel died in French prison 2022 while awaiting trial — no US charges followed"},
    ],
    hypothesis:"Epstein operated as an intelligence asset — and the client list remains sealed specifically to protect current government officials",
    difficulty:"HARD",odds:{confirm:68,deny:32},analysts:248910,daysOpen:1680},
 
   {id:"c08",codename:"HULL 401",category:"FINANCIAL HISTORY",urgency:"LOW",
    headline:"Did J.P. Morgan Sink the Titanic to Kill Federal Reserve Opponents?",
-   brief:"The Federal Reserve was created December 1913 — 20 months after the Titanic sank. Three of the most vocal opponents of a US central bank — John Jacob Astor IV, Benjamin Guggenheim, and Isidor Straus — all died on the Titanic. J.P. Morgan, who owned the White Star Line and booked its most expensive suite, canceled his ticket days before departure. Morgan was the Federal Reserve's primary architect. The Titanic's sister ship Olympic had been severely damaged months earlier — ruled Morgan's fault with no insurance payout.",
+   brief:"The Federal Reserve was created December 1913 — 20 months after the Titanic sank. Three of the most vocal opponents of a US central bank — John Jacob Astor IV, Benjamin Guggenheim, and Isidor Straus — all died on the Titanic. J.P. Morgan, who owned the White Star Line, canceled his ticket days before departure citing 'business reasons.'",
    evidence:[
-     {label:"Passenger List vs Fed Opposition",note:"Astor, Guggenheim, and Straus were the three most prominent public opponents of the Aldrich Plan (proto-Federal Reserve). All three booked passage. All three died"},
-     {label:"J.P. Morgan Cancellation",note:"Morgan canceled booking days before departure citing 'business reasons.' His personal physician also canceled. Morgan had reserved the most expensive suite on the ship"},
+     {label:"Passenger List vs Fed Opposition",note:"Astor, Guggenheim, and Straus were the three most prominent public opponents of the Aldrich Plan. All three booked passage. All three died"},
+     {label:"J.P. Morgan Cancellation",note:"Morgan canceled booking days before departure. His personal physician also canceled. Morgan had reserved the most expensive suite on the ship"},
      {label:"Olympic Insurance Documentation",note:"Olympic severely damaged in September 1911 collision with HMS Hawke. Court ruled Morgan's fault — no insurance payout. Both ships insured for identical $5M amounts"},
-     {label:"Federal Reserve Timeline",note:"Aldrich Plan drafted November 1910. Titanic sank April 1912. Federal Reserve Act signed December 23, 1913. Anti-Fed opposition was organized and vocal until 1912"},
+     {label:"Federal Reserve Timeline",note:"Aldrich Plan drafted November 1910. Titanic sank April 1912. Federal Reserve Act signed December 23, 1913"},
    ],
-   hypothesis:"The Titanic sinking was orchestrated — possibly after being swapped with the damaged Olympic — to eliminate key opponents of the Federal Reserve",
+   hypothesis:"The Titanic sinking was orchestrated to eliminate key opponents of the Federal Reserve",
    difficulty:"HARD",odds:{confirm:22,deny:78},analysts:56210,daysOpen:40912},
 
   {id:"c09",codename:"OPERATION MOCKINGBIRD",category:"INTELLIGENCE / MEDIA",urgency:"HIGH",
    headline:"Hollywood and the CIA: Is Entertainment America's Largest Psyop?",
-   brief:"Operation Mockingbird — the CIA's documented 1950s-70s program to infiltrate American media — never officially ended. The CIA today operates a confirmed Entertainment Industry Liaison Office in LA, trading script consultation for creative influence. Top Gun: Maverick required Navy final-cut approval. Zero Dark Thirty was made with CIA access and depicted torture as effective — contradicting the CIA's own internal findings. The Church Committee confirmed 400+ CIA-journalist relationships in 1975.",
+   brief:"Operation Mockingbird — the CIA's documented 1950s–70s program to infiltrate American media — never officially ended. The CIA today operates a confirmed Entertainment Industry Liaison Office in LA. Top Gun: Maverick required Navy final-cut approval. Zero Dark Thirty depicted torture as effective — contradicting CIA's own internal findings.",
    evidence:[
-     {label:"CIA Entertainment Liaison (Confirmed)",note:"CIA's Entertainment Industry Liaison Office publicly confirmed, based in Los Angeles. Former director Chase Brandon acknowledged offering filmmakers 'guidance' in exchange for cooperation and access"},
-     {label:"Top Gun: Maverick (Navy Approval)",note:"Navy required final approval of all footage. Classified capability scenes deleted. Cast underwent Navy approval. Navy received formal 'branding' input throughout production"},
-     {label:"Zero Dark Thirty (Senate Report)",note:"Senate Intelligence Committee found filmmakers received 'inappropriate' CIA access. Film depicted torture as producing actionable intelligence — contradicting CIA's own post-9/11 internal assessments"},
-     {label:"Church Committee (1975)",note:"Senate hearing confirmed CIA had relationships with 400+ American journalists and owned several media organizations outright. Program formally 'ended' 1976 — no verification mechanism"},
+     {label:"CIA Entertainment Liaison (Confirmed)",note:"CIA's Entertainment Industry Liaison Office publicly confirmed, based in Los Angeles. Former director Chase Brandon acknowledged offering filmmakers 'guidance' in exchange for access"},
+     {label:"Top Gun: Maverick (Navy Approval)",note:"Navy required final approval of all footage. Classified capability scenes deleted. Cast underwent Navy approval. Navy received formal 'branding' input"},
+     {label:"Zero Dark Thirty (Senate Report)",note:"Senate Intelligence Committee found filmmakers received 'inappropriate' CIA access. Film depicted torture as producing actionable intelligence — contradicting CIA's own assessments"},
+     {label:"Church Committee (1975)",note:"Senate hearing confirmed CIA had relationships with 400+ American journalists and owned several media organizations outright. Program formally 'ended' 1976"},
    ],
-   hypothesis:"The CIA's Entertainment Industry Liaison Office constitutes a continuation of Operation Mockingbird — shaping public perception through major commercial films",
+   hypothesis:"The CIA's Entertainment Industry Liaison Office constitutes a continuation of Operation Mockingbird",
    difficulty:"MODERATE",odds:{confirm:74,deny:26},analysts:78230,daysOpen:892},
 
   {id:"c10",codename:"DARK SIGNALS",category:"REGULATORY INTEGRITY",urgency:"HIGH",
    headline:"Did Regulatory Agencies Suppress Post-Authorization Vaccine Safety Signals?",
-   brief:"Under court order in 2022, the FDA released Pfizer's COVID-19 trial data — originally requesting 75 years to disclose. The documents listed 1,291 adverse event types identified in the first 90 days post-authorization. A CDC working group analyzing myocarditis signals in young males held 22 meetings — minutes withheld from public record for months. A Harvard-HHS study found VAERS captures less than 1% of adverse events, yet the automated detection system it proposed was never implemented.",
+   brief:"Under court order in 2022, the FDA released Pfizer's COVID-19 trial data — originally requesting 75 years to disclose. The documents listed 1,291 adverse event types in the first 90 days. A CDC working group analyzing myocarditis signals held 22 meetings — minutes withheld for months. A Harvard-HHS study found VAERS captures less than 1% of adverse events.",
    evidence:[
-     {label:"FDA Court-Ordered Data Release",note:"Judge Pittman ordered release at 55,000 pages/month. FDA had requested 75 years. First batch included 'Adverse Events of Special Interest' listing 1,291 event types in first 90 days"},
+     {label:"FDA Court-Ordered Data Release",note:"Judge Pittman ordered release at 55,000 pages/month. FDA had requested 75 years. First batch included 'Adverse Events of Special Interest' listing 1,291 event types"},
      {label:"CDC ACIP Myocarditis Minutes",note:"Working group met 22 times. Minutes withheld until FOIA requests. Signal detected February 2021 — publicly announced June 2021. 4-month gap not disclosed at the time"},
-     {label:"Harvard-HHS Study (2010)",note:"HHS-funded study found VAERS captures <1% of actual adverse events. Automated detection system proposed — delivered to HHS — never implemented. Study not publicly promoted"},
-     {label:"V-Safe Data Release (FOIA)",note:"CDC collected real-time post-vaccination data from 10M+ participants. Lawsuit required release. 7.7% of V-Safe users reported health events requiring medical care — unpublicized"},
+     {label:"Harvard-HHS Study (2010)",note:"HHS-funded study found VAERS captures <1% of actual adverse events. Automated detection system proposed — delivered to HHS — never implemented"},
+     {label:"V-Safe Data Release (FOIA)",note:"CDC collected real-time post-vaccination data from 10M+ participants. 7.7% reported health events requiring medical care — unpublicized"},
    ],
-   hypothesis:"Post-authorization safety signals for COVID-19 vaccines were identified earlier and were more significant than publicly communicated by FDA and CDC",
+   hypothesis:"Post-authorization safety signals were identified earlier and were more significant than publicly communicated",
    difficulty:"EXTREME",odds:{confirm:49,deny:51},analysts:182340,daysOpen:1095},
 
   {id:"c11",codename:"RATLINES",category:"HISTORICAL INTELLIGENCE",urgency:"LOW",
    headline:"Did Hitler Escape? The FBI Files, the DNA Test, and Argentina",
-   brief:"The FBI investigated claims of Hitler's survival in Argentina for years after WWII and released those files in 2014 via FOIA. One 1945 report describes an informant claiming Hitler arrived by submarine with Eva Braun and 50 SS officers. The Soviet skull fragment that 'confirmed' his death was DNA-tested in 2018 — and found to belong to a woman under 40. Hitler was 56. Meanwhile, Operation Paperclip brought 1,600+ Nazi scientists to America.",
+   brief:"The FBI investigated claims of Hitler's survival in Argentina for years after WWII, releasing those files in 2014 via FOIA. The Soviet skull fragment that 'confirmed' his death was DNA-tested in 2018 — and found to belong to a woman under 40. Hitler was 56. Meanwhile, Operation Paperclip brought 1,600+ Nazi scientists to America.",
    evidence:[
-     {label:"FBI FOIA Files (Released 2014)",note:"Actual FBI investigation files include multiple informants claiming Hitler survived. One 1945 report describes submarine arrival in Argentina. Files publicly available at vault.fbi.gov"},
-     {label:"Soviet Skull Fragment DNA (2018)",note:"University of Connecticut researchers tested the skull fragment Soviet archives claimed was Hitler's. Published in European Journal of Archaeology: fragment belongs to a woman, under 40. Hitler was 56"},
-     {label:"Operation Paperclip (Declassified)",note:"US State Dept / OSS program brought 1,600+ Nazi scientists to US. Includes Wernher von Braun (NASA) and others with documented war crime involvement — identities altered"},
-     {label:"Vatican Ratlines (Argentine Files)",note:"Vatican-issued travel documents facilitated Nazi escape routes. Argentine government records show Perón's government issued thousands of blank passports to 'European immigrants' 1946-1950"},
+     {label:"FBI FOIA Files (Released 2014)",note:"FBI investigation files include multiple informants claiming Hitler survived. One 1945 report describes submarine arrival in Argentina. Files publicly available at vault.fbi.gov"},
+     {label:"Soviet Skull Fragment DNA (2018)",note:"University of Connecticut researchers tested the skull fragment Soviet archives claimed was Hitler's. Published in European Journal of Archaeology: belongs to a woman, under 40. Hitler was 56"},
+     {label:"Operation Paperclip (Declassified)",note:"US State Dept / OSS program brought 1,600+ Nazi scientists to US including Wernher von Braun (NASA) — identities altered"},
+     {label:"Vatican Ratlines (Argentine Files)",note:"Vatican-issued travel documents facilitated Nazi escape routes. Argentine records show Perón's government issued thousands of blank passports to 'European immigrants' 1946-1950"},
    ],
    hypothesis:"Hitler did not die in the Berlin bunker — he escaped via submarine and Nazi ratlines to South America",
    difficulty:"EXTREME",odds:{confirm:18,deny:82},analysts:91020,daysOpen:29200},
 
   {id:"c12",codename:"SIGHT LINE",category:"SECRET SERVICE / SECURITY",urgency:"HIGH",
    headline:"Butler, PA: Was the Secret Service's Failure Negligence or Coordination?",
-   brief:"On July 13, 2024, a gunman fired on Donald Trump from a rooftop 130 meters from the stage. Local police flagged that building as a security gap before the event. Officers identified the shooter as suspicious 91 minutes before he fired. Multiple radio communications documented his location. He was photographed on the roof minutes before the shooting. Secret Service counter-snipers saw him but stated they 'could not engage.' Corey Comperatore was killed. Director Cheatle resigned 10 days later calling it 'the most significant operational failure in decades.'",
+   brief:"On July 13, 2024, a gunman fired on Donald Trump from a rooftop 130 meters from the stage. Local police flagged that building as a security gap before the event. Officers identified the shooter as suspicious 91 minutes before he fired. Secret Service counter-snipers saw him but stated they 'could not engage.' Corey Comperatore was killed.",
    evidence:[
      {label:"Butler County Emergency Logs",note:"Radio logs: shooter identified as suspicious at 5:45 PM — 91 minutes before shooting at 6:11 PM. Multiple officers communicated his position. No interdiction occurred"},
-     {label:"AGR Building Pre-Event Assessment",note:"Local law enforcement raised the AGR Building roof as a security vulnerability during pre-event planning. Building assigned to local police — insufficient personnel to cover rooftop perimeter"},
-     {label:"Counter-Sniper Testimony (House)",note:"Secret Service counter-sniper testified team observed shooter with rifle before he fired but 'could not engage due to line-of-sight issues.' Shooter was photographed by law enforcement minutes prior"},
-     {label:"Director Cheatle Resignation",note:"Director Kimberly Cheatle resigned July 23 calling it 'the most significant operational failure of the Secret Service in decades.' No criminal referrals. Investigation ongoing"},
+     {label:"AGR Building Pre-Event Assessment",note:"Local law enforcement raised the AGR Building roof as a security vulnerability during pre-event planning. Building assigned to local police — insufficient personnel"},
+     {label:"Counter-Sniper Testimony (House)",note:"Secret Service counter-sniper testified team observed shooter with rifle before he fired but 'could not engage due to line-of-sight issues.' Shooter was photographed minutes prior"},
+     {label:"Director Cheatle Resignation",note:"Director Kimberly Cheatle resigned July 23 calling it 'the most significant operational failure of the Secret Service in decades.' No criminal referrals"},
    ],
-   hypothesis:"The Butler security failure represents coordinated institutional negligence across multiple independent decision points — not random isolated incompetence",
+   hypothesis:"The Butler security failure represents coordinated institutional negligence — not random incompetence",
    difficulty:"HARD",odds:{confirm:38,deny:62},analysts:310240,daysOpen:229},
 
-  // --- NEW CASES ---
-  {id:"c13", codename:"MOON SHADOW", category:"SPACE & DECEPTION", urgency:"MEDIUM",
+  {id:"c13",codename:"MOON SHADOW",category:"SPACE & DECEPTION",urgency:"MEDIUM",
    headline:"Did We Really Land on the Moon? The Unexplained Anomalies",
-   brief:"Conspiracy theorists point to multiple anomalies: the flag waving in a vacuum, no blast crater under the lander, crosshairs behind objects, and the missing original tapes. NASA admits the high-res tapes were erased. The Van Allen radiation belt should have fried the astronauts, yet they survived. What really happened in 1969?",
+   brief:"NASA admits the original high-resolution Apollo 11 telemetry tapes were erased and reused. The Van Allen radiation belt poses a documented hazard. Multiple photographic anomalies have been noted by engineers and film analysts. What actually happened on July 20, 1969?",
    evidence:[
-     {label:"NASA's Missing Tapes", note:"Original Apollo 11 telemetry tapes erased and reused. Only low-quality transfers remain."},
-     {label:"Flag Physics", note:"Flag appears to ripple despite no atmosphere. NASA says a horizontal rod held it, but footage shows movement."},
-     {label:"Radiation Belt Calculations", note:"Van Allen belt exposure would have been fatal unless shielded – but Apollo capsules had minimal shielding."},
-     {label:"Crosshair Anomalies", note:"In some photos, crosshairs appear behind objects, suggesting composite images."},
+     {label:"NASA's Missing Tapes",note:"Original Apollo 11 telemetry tapes erased and reused. Only low-quality broadcast transfers remain. NASA's own investigation confirmed the loss"},
+     {label:"Flag Movement Footage",note:"Flag appears to ripple in multiple sequences. NASA attributes this to the horizontal support rod and astronaut movement — footage remains disputed by physicists"},
+     {label:"Radiation Belt Calculations",note:"Van Allen belt traversal would have required significant shielding. Independent engineers have disputed whether the Apollo capsule's shielding was sufficient"},
+     {label:"Crosshair Anomalies",note:"In multiple Hasselblad photographs, reticle crosshairs appear behind bright objects — suggesting possible composite processing of images"},
    ],
-   hypothesis:"The Apollo 11 moon landing was staged, possibly because we lacked the technology to actually go, or because something was found there that had to be hidden.",
-   difficulty:"MODERATE", odds:{confirm:52, deny:48}, analysts:345678, daysOpen:20638},
+   hypothesis:"The Apollo 11 moon landing footage was staged or significantly altered — the mission's true nature remains classified",
+   difficulty:"MODERATE",odds:{confirm:52,deny:48},analysts:345678,daysOpen:20638},
 
-  {id:"c14", codename:"DARK WATERS", category:"ENVIRONMENTAL CRIME", urgency:"CRITICAL",
-   headline:"Did a Company Dump Toxic Waste and Bury the Evidence?",
-   brief:"Internal documents from a chemical plant show decades of dumping hexavalent chromium into unlined pits, contaminating groundwater for miles. Cancer rates in the surrounding town are 300% above national average. When the EPA finally investigated, key documents were 'accidentally' shredded and the company's lawyers got the statute of limitations applied retroactively.",
+  {id:"c14",codename:"DARK WATERS",category:"ENVIRONMENTAL CRIME",urgency:"CRITICAL",
+   headline:"Did a Chemical Company Poison a Community and Bury the Evidence?",
+   brief:"Internal documents from a chemical plant show decades of dumping hexavalent chromium into unlined pits, contaminating groundwater across a five-mile radius. Cancer rates in the surrounding community run 300% above the national average. When the EPA investigated, key pre-1990 documents had been shredded.",
    evidence:[
-     {label:"Internal Memo (1987)", note:"'Continue using Pit 5 – cheaper than proper disposal. Monitor wells not required.'"},
-     {label:"Cancer Registry Data", note:"Tripled leukemia rates in a 5-mile radius over 20 years. State health department buried the study."},
-     {label:"EPA Settlement", note:"Company paid $2M fine, no admission of guilt. Cleanup deemed 'not feasible.'"},
-     {label:"Whistleblower Testimony", note:"Former plant manager: 'We were told to shred everything pre-1990.'"},
+     {label:"Internal Memo (1987)",note:"'Continue using Pit 5 — cheaper than proper disposal. Monitor wells not required by current consent decree.' Signed by plant operations director"},
+     {label:"Cancer Registry Data",note:"Tripled leukemia and lymphoma rates documented in a 5-mile radius over 20 years. State health department study completed but not published"},
+     {label:"EPA Settlement Documentation",note:"Company paid $2M fine, no admission of guilt. Cleanup deemed 'not cost-feasible.' No criminal referrals made despite evidence of knowing violations"},
+     {label:"Whistleblower Testimony",note:"Former plant manager under oath: 'We were explicitly told to shred everything pre-1990 before the EPA showed up.' Corroborated by two other former employees"},
    ],
-   hypothesis:"The company knowingly poisoned a community and then used legal loopholes to avoid accountability – with state regulators looking the other way.",
-   difficulty:"HARD", odds:{confirm:81, deny:19}, analysts:12590, daysOpen:12783},
+   hypothesis:"The company knowingly contaminated the community's water supply and systematically destroyed evidence to avoid criminal liability",
+   difficulty:"HARD",odds:{confirm:81,deny:19},analysts:12590,daysOpen:12783},
 
-  {id:"c15", codename:"TINY SINGULARITIES", category:"PHYSICS & SECRECY", urgency:"LOW",
+  {id:"c15",codename:"TINY SINGULARITIES",category:"PHYSICS & SECRECY",urgency:"LOW",
    headline:"CERN's Micro Black Holes: Are They Already Here?",
-   brief:"When the Large Hadron Collider was switched on, doomsayers warned of micro black holes. CERN assured us they're harmless. But recently, declassified documents reveal the US government funded parallel research into 'micro black hole production for energy generation.' Some physicists now speculate we've already created them – and they're being studied in secret labs.",
+   brief:"CERN's own safety reports acknowledge that micro black holes could theoretically be produced by the Large Hadron Collider. A US government budget document contained a line item referencing 'stable microscopic singularity generation' before being removed from public versions. Hawking radiation — the theoretical mechanism that would make micro black holes safe — has never been experimentally confirmed.",
    evidence:[
-     {label:"CERN Safety Reports", note:"Admit micro black holes could be produced, but say they'd evaporate instantly – based on theoretical math, not observation."},
-     {label:"DARPA Funding (Redacted)", note:"A 2019 budget line item: 'Stable microscopic singularity generation – Phase II' – later removed from public versions."},
-     {label:"Hawking Radiation Debate", note:"Hawking's theory that black holes evaporate has never been proven. Some argue they could be stable."},
-     {label:"Unexplained Energy Signatures", note:"Satellites detected unexplained gamma-ray bursts coinciding with LHC run times – officially dismissed as 'instrument error.'"},
+     {label:"CERN Safety Assessment",note:"Official CERN safety documents acknowledge micro black hole production as theoretically possible. Safety conclusion rests on unverified Hawking radiation theory"},
+     {label:"DARPA Budget Line Item",note:"2019 budget document included 'Stable microscopic singularity generation — Phase II' before the line was removed from publicly released versions"},
+     {label:"Hawking Radiation Status",note:"Stephen Hawking's theory that micro black holes evaporate via radiation has never been experimentally observed or confirmed in any laboratory setting"},
+     {label:"Anomalous Gamma-Ray Events",note:"Satellite instruments detected unexplained gamma-ray burst patterns coinciding with specific LHC run periods — classified by CERN as instrument calibration artifacts"},
    ],
-   hypothesis:"CERN and related secret programs have successfully created stable micro black holes and are now studying them in classified facilities.",
-   difficulty:"EXTREME", odds:{confirm:23, deny:77}, analysts:45670, daysOpen:4380},
+   hypothesis:"CERN or affiliated classified programs have successfully produced stable micro black holes and are studying them outside public scientific disclosure",
+   difficulty:"EXTREME",odds:{confirm:23,deny:77},analysts:45670,daysOpen:4380},
 ];
 
-const STAKES=[
-  {id:"s1",label:"Read and summarize a 15-page financial disclosure document in full",time:"~2 hrs"},
-  {id:"s2",label:"Cross-reference 3 independent journalism sources and write a 500-word analytical brief",time:"~1.5 hrs"},
-  {id:"s3",label:"File a FOIA request for records directly related to this case",time:"~30 min"},
-  {id:"s4",label:"Watch unedited source footage and produce a timestamped breakdown",time:"~45 min"},
-  {id:"s5",label:"Build an entity relationship map using only public records — trace all ownership and connection chains",time:"~3-4 hrs"},
+const STAKES = [
+  {id:"s1", label:"Read and summarize a 15-page financial disclosure document in full", time:"~2 hrs"},
+  {id:"s2", label:"Cross-reference 3 independent journalism sources and write a 500-word analytical brief", time:"~1.5 hrs"},
+  {id:"s3", label:"File a FOIA request for records directly related to this case", time:"~30 min"},
+  {id:"s4", label:"Watch unedited source footage and produce a timestamped breakdown", time:"~45 min"},
+  {id:"s5", label:"Build an entity relationship map using only public records", time:"~3–4 hrs"},
 ];
 
-const TERMINAL=[
-  {text:"INITIALIZING CIVIC ENGINE v2.1.4...",type:"dim",delay:0},
-  {text:"CONNECTING TO DISTRIBUTED CONSENSUS NETWORK...",type:"dim",delay:350},
-  {text:"[OK] NODE LINKAGE: 1,247 ACTIVE ANALYSTS",type:"ok",delay:650},
-  {text:"ROUTING SUBMISSION THROUGH VERIFICATION PIPELINE...",type:"dim",delay:950},
-  {text:"[OK] CHAIN OF CUSTODY HASH GENERATED",type:"ok",delay:1200},
-  {text:"CROSS-REFERENCING EVIDENCE MATRIX...",type:"dim",delay:1500},
-  {text:"[WARN] ADVERSARIAL REVIEW PANEL ENGAGED",type:"warn",delay:1800},
-  {text:"EVALUATING ANALYTICAL RIGOR...",type:"dim",delay:2100},
-  {text:"AWAITING CONSENSUS VERDICT...",type:"dim",delay:2400},
+const TERMINAL = [
+  {text:"INITIALIZING CIVIC ENGINE v2.1.4...", type:"dim", delay:0},
+  {text:"CONNECTING TO DISTRIBUTED CONSENSUS NETWORK...", type:"dim", delay:350},
+  {text:"[OK] NODE LINKAGE: 1,247 ACTIVE ANALYSTS", type:"ok", delay:650},
+  {text:"ROUTING SUBMISSION THROUGH VERIFICATION PIPELINE...", type:"dim", delay:950},
+  {text:"[OK] CHAIN OF CUSTODY HASH GENERATED", type:"ok", delay:1200},
+  {text:"CROSS-REFERENCING EVIDENCE MATRIX...", type:"dim", delay:1500},
+  {text:"[WARN] ADVERSARIAL REVIEW PANEL ENGAGED", type:"warn", delay:1800},
+  {text:"EVALUATING ANALYTICAL RIGOR...", type:"dim", delay:2100},
+  {text:"AWAITING CONSENSUS VERDICT...", type:"dim", delay:2400},
 ];
 
-const CATS=["ALL",...new Set(CASES.map(c=>c.category))];
 
-function scoreLocally(r,c){
-  const w=r.trim().split(/\s+/).length;
-  const refs=c.evidence.filter(e=>r.toLowerCase().includes(e.label.toLowerCase().split(" ")[0])).length;
-  const s=Math.min(100,Math.max(15,Math.round(w*1.6+refs*12+8)));
-  const v=s>=70?"VERIFIED":s>=40?"INSUFFICIENT":"REJECTED";
-  const d=v==="VERIFIED"?Math.min(30,Math.round((s-60)/2)):v==="REJECTED"?-10:0;
-  return{score:s,verdict:v,vpDelta:d,
-    summary:`Your analysis ${s>=60?"demonstrates reasonable":"shows limited"} engagement with the available evidence. ${s>=70?"The reasoning chain is logically structured.":"More specific evidence engagement would strengthen the analytical case."}`,
-    strengths:s>=50?["Formed a clear positional stance","Engaged with the case context"]:["Submitted an analysis for community review"],
-    weaknesses:s<70?["Could engage more specifically with individual evidence items","Consider alternative explanations more explicitly"]:["Minor logical gaps in the causal chain"],
-    conclusion:"Continue developing your investigative methodology to improve your Verification Power score."};
+const EXAMPLE_ANALYSES = {
+  "c01": {stance:"CONFIRM",score:91,text:"The LLC Registry cross-reference is the strongest element here. Apex Structural sharing a registered agent with Hendricks Family Holdings isn't coincidental — registered agents are specific legal designations. Combined with all three contractors donating to Hendricks' PAC within 18 months of winning no-bid contracts, this creates a documentable conflict-of-interest chain. The 90-day incorporation window before bid deadline is telling: legitimate contractors don't incorporate days before a major municipal bid. I confirm the hypothesis."},
+  "c02": {stance:"CONFIRM",score:88,text:"The methodology evidence is decisive. Using 278 of 847 EPA sites (33%) and selecting specifically the 6-week seasonal variation window — which EPA's own footnotes acknowledge — isn't accidental. That requires deliberate data selection. The SEC filing showing 12,000 undisclosed shares in Clearwater Solutions while writing a report that benefits Clearwater's $12.2M contract bid is a textbook conflict of interest. Selective data AND financial stake together confirm motivated reasoning, not sloppy science."},
+  "c03": {stance:"CONFIRM",score:87,text:"The FOIA stonewalling is the critical signal. Three requests, 11 months, 8 months past the legal 30-day window — this is deliberate obstruction. The revolving door (Webb: TechCorp VP → FCC Deputy Director → oversees spectrum auction → TechCorp wins $2.8B) is documented in public records. The $4.1M lobbying spend targeting FCC spectrum policy while Webb was in his role completes the circle. The obstruction pattern implies there's something in those documents worth hiding."},
+  "c05": {stance:"CONFIRM",score:94,text:"The BBC timestamp is the most independently verifiable anomaly. Jane Standley's broadcast at 4:54 PM reporting WTC7's collapse while WTC7 is visibly standing behind her is documented fact — the footage exists. NIST's own lead investigator stated they 'were not asked to look at' controlled demolition, meaning the most obvious alternative hypothesis was excluded by design. The SEC records destruction — 3,000+ active Enron and WorldCom files — adds a documented beneficiary. These three elements are not adequately explained by the official account."},
+  "c07": {stance:"CONFIRM",score:92,text:"The Acosta statement is load-bearing evidence. 'Belonged to intelligence' is a specific institutional designation with legal implications. Acosta was a federal prosecutor who understood what he was saying — his resignation 10 days after the story broke confirms it. The MCC surveillance failure — both cameras AND both guards simultaneously — defies statistical probability. Maxwell's conviction on 6 trafficking counts with zero co-conspirator charges at sentencing is prosecutorially extraordinary. These three documented facts create a coherent pattern of protection that continued after Epstein's death."},
+  "c09": {stance:"CONFIRM",score:86,text:"The CIA Entertainment Liaison Office is publicly confirmed — the question is whether it constitutes Mockingbird continuation. Navy final-cut approval over Top Gun: Maverick is editorial control, not creative collaboration. The Senate Intelligence Committee found Zero Dark Thirty filmmakers received 'inappropriate' CIA access, and the film depicted torture as effective — contradicting CIA's own internal assessments. The Church Committee confirmed 400+ journalist relationships in 1975. The program 'ended' with no verification mechanism. The infrastructure exists. The behavior matches."},
+  "c12": {stance:"CONFIRM",score:89,text:"The 91-minute gap is the central anomaly. Radio logs document the shooter as suspicious at 5:45 PM. Shot fired at 6:11 PM. Multiple officers communicated his position — this is not a communications failure. The counter-sniper testimony that they 'could not engage' while the shooter was being photographed by law enforcement on the same roof is an irreconcilable contradiction. Cheatle's 'most significant operational failure in decades' followed by zero criminal referrals suggests the official response is designed to contain rather than explain."},
+};
+
+const getExample = (caseId) => EXAMPLE_ANALYSES[caseId] || {
+  stance:"CONFIRM", score:85,
+  text:"Reference specific evidence items by name and explain why they matter. A strong analysis does three things: cites evidence specifically, traces causal chains, and names at least one alternative explanation considered and rejected. Score 85+ analysts consistently do all three."
+};
+
+const CATS = ["ALL", ...new Set(CASES.map(c => c.category))];
+
+function scoreLocally(r, c) {
+  const w = r.trim().split(/\s+/).length;
+  const refs = c.evidence.filter(e => r.toLowerCase().includes(e.label.toLowerCase().split(" ")[0])).length;
+  const s = Math.min(100, Math.max(15, Math.round(w * 1.6 + refs * 12 + 8)));
+  const v = s >= 70 ? "VERIFIED" : s >= 40 ? "INSUFFICIENT" : "REJECTED";
+  const d = v === "VERIFIED" ? Math.min(30, Math.round((s-60)/2)) : v === "REJECTED" ? -10 : 0;
+  return {
+    score: s, verdict: v, vpDelta: d,
+    summary: `Your analysis ${s >= 60 ? "demonstrates reasonable" : "shows limited"} engagement with the available evidence. ${s >= 70 ? "The reasoning chain is logically structured." : "More specific evidence engagement would strengthen the analytical case."}`,
+    strengths: s >= 50 ? ["Formed a clear positional stance", "Engaged with the case context"] : ["Submitted an analysis for community review"],
+    weaknesses: s < 70 ? ["Could engage more specifically with individual evidence items", "Consider alternative explanations more explicitly"] : ["Minor logical gaps in the causal chain"],
+    conclusion: "Continue developing your investigative methodology to improve your Verification Power score.",
+  };
 }
 
-function App(){
-  const[screen,setScreen]=useState("init");
-  const[vp,setVp]=useState(0);
-  const[debt,setDebt]=useState(null);
-  const[sel,setSel]=useState(null);
-  const[stance,setStance]=useState(null);
-  const[reasoning,setReasoning]=useState("");
-  const[stake,setStake]=useState(null);
-  const[lines,setLines]=useState([]);
-  const[verdict,setVerdict]=useState(null);
-  const[apiKey,setApiKey]=useState("");
-  const[apiInput,setApiInput]=useState("");
-  const[showBanner,setShowBanner]=useState(false);
-  const[filter,setFilter]=useState("ALL");
+function App() {
+  const [screen, setScreen]       = useState("init");
+  const [vp, setVp]               = useState(0);
+  const [debt, setDebt]           = useState(null);
+  const [sel, setSel]             = useState(null);
+  const [stance, setStance]       = useState(null);
+  const [reasoning, setReasoning] = useState("");
+  const [stake, setStake]         = useState(null);
+  const [lines, setLines]         = useState([]);
+  const [verdict, setVerdict]     = useState(null);
+  const [apiKey, setApiKey]       = useState("");
+  const [apiInput, setApiInput]   = useState("");
+  const [showBanner, setShowBanner] = useState(false);
+  const [filter, setFilter]       = useState("ALL");
+  const [showExample, setShowExample] = useState(false);
 
-  useEffect(()=>{
-    const sv=parseInt(localStorage.getItem("cg_vp"))||0;
-    const sd=localStorage.getItem("cg_debt");
-    const sk=localStorage.getItem("cg_apikey")||"";
-    setVp(sv);setApiKey(sk);setApiInput(sk);
-    if(sd){setDebt(JSON.parse(sd));setScreen("debt");}
-    else{setScreen("hub");}
-    if(!sk)setShowBanner(true);
-  },[]);
+  useEffect(() => {
+    const sv = parseInt(localStorage.getItem("cg_vp")) || 0;
+    const sd = localStorage.getItem("cg_debt");
+    const sk = localStorage.getItem("cg_apikey") || "";
+    setVp(sv); setApiKey(sk); setApiInput(sk);
+    if (sd) { setDebt(JSON.parse(sd)); setScreen("debt"); }
+    else { setScreen("hub"); }
+    if (!sk) setShowBanner(true);
+  }, []);
 
-  const saveKey=()=>{setApiKey(apiInput.trim());localStorage.setItem("cg_apikey",apiInput.trim());setShowBanner(false);};
-  const saveVp=(n)=>{setVp(n);localStorage.setItem("cg_vp",String(n));};
-  const saveDebt=(d)=>{setDebt(d);localStorage.setItem("cg_debt",JSON.stringify(d));};
-  const rmDebt=()=>{setDebt(null);localStorage.removeItem("cg_debt");};
+  const saveKey  = () => { setApiKey(apiInput.trim()); localStorage.setItem("cg_apikey", apiInput.trim()); setShowBanner(false); };
+  const saveVp   = n  => { setVp(n); localStorage.setItem("cg_vp", String(n)); };
+  const saveDebt = d  => { setDebt(d); localStorage.setItem("cg_debt", JSON.stringify(d)); };
+  const rmDebt   = () => { setDebt(null); localStorage.removeItem("cg_debt"); };
 
-  const submit=async()=>{
-    if(!sel||!stance||reasoning.trim().length<30||!stake)return;
-    setScreen("loading");setLines([]);
-    TERMINAL.forEach(({text,type,delay})=>setTimeout(()=>setLines(p=>[...p,{text,type}]),delay));
+  const submit = async () => {
+    if (!sel || !stance || reasoning.trim().length < 30 || !stake) return;
+    setScreen("loading"); setLines([]);
+    TERMINAL.forEach(({text,type,delay}) => setTimeout(() => setLines(p => [...p, {text,type}]), delay));
+
     let parsed;
-    if(apiKey){
-      try{
-        const ev=sel.evidence.map(e=>`• [${e.label}]: ${e.note}`).join("\n");
-        const res=await fetch("https://api.anthropic.com/v1/messages",{
-          method:"POST",
-          headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-          body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:800,messages:[{role:"user",content:`You are a senior analyst for a crowdsourced investigative journalism platform. Evaluate REASONING QUALITY — not whether the user is ultimately correct.
+    if (apiKey) {
+      try {
+        const ev = sel.evidence.map(e => `• [${e.label}]: ${e.note}`).join("\n");
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+          body: JSON.stringify({
+            model: "claude-haiku-4-5-20251001", max_tokens: 800,
+            messages: [{role:"user", content:`You are a senior analyst for a crowdsourced investigative journalism platform. Evaluate REASONING QUALITY — not whether the user is ultimately correct.
 
 CASE: ${sel.headline}
 Brief: ${sel.brief}
@@ -440,83 +1371,96 @@ USER:
 Stance: ${stance.toUpperCase()}
 Reasoning: "${reasoning}"
 
-SCORING: 85-100=Exceptional(specific evidence,causal reasoning,considers alternatives) | 65-84=Solid | 40-64=Adequate | 0-39=Insufficient
+SCORING: 85-100=Exceptional | 65-84=Solid | 40-64=Adequate | 0-39=Insufficient
 VERDICT: score>=70→"VERIFIED" vpDelta=round((score-60)/2)capped30 | 40-69→"INSUFFICIENT" vpDelta=0 | <40→"REJECTED" vpDelta=-10
 
-Respond ONLY with valid JSON no markdown:
-{"score":<0-100>,"verdict":"VERIFIED"|"INSUFFICIENT"|"REJECTED","summary":"<2-3 sentences>","strengths":["<up to 2>"],"weaknesses":["<up to 2>"],"conclusion":"<1 sentence>","vpDelta":<number>}`}]})
+Respond ONLY with valid JSON, no markdown:
+{"score":<0-100>,"verdict":"VERIFIED"|"INSUFFICIENT"|"REJECTED","summary":"<2-3 sentences>","strengths":["<up to 2>"],"weaknesses":["<up to 2>"],"conclusion":"<1 sentence>","vpDelta":<number>}`}]
+          })
         });
-        const data=await res.json();
-        parsed=JSON.parse(data.content.map(b=>b.text||"").join("").replace(/```json|```/g,"").trim());
-      }catch{parsed=scoreLocally(reasoning,sel);}
-    }else{parsed=scoreLocally(reasoning,sel);}
-    await new Promise(r=>setTimeout(r,2700));
-    const nv=Math.max(0,vp+(parsed.vpDelta||0));
+        const data = await res.json();
+        parsed = JSON.parse(data.content.map(b => b.text||"").join("").replace(/```json|```/g,"").trim());
+      } catch { parsed = scoreLocally(reasoning, sel); }
+    } else { parsed = scoreLocally(reasoning, sel); }
+
+    await new Promise(r => setTimeout(r, 2700));
+    const nv = Math.max(0, vp + (parsed.vpDelta || 0));
     saveVp(nv);
-    if(parsed.verdict==="REJECTED")saveDebt({task:stake.label,codename:sel.codename});
-    setVerdict(parsed);setLines([]);setScreen("verdict");
+    if (parsed.verdict === "REJECTED") saveDebt({task: stake.label, codename: sel.codename});
+    setVerdict(parsed); setLines([]); setScreen("verdict");
   };
 
-  const reset=()=>{setSel(null);setStance(null);setReasoning("");setStake(null);setVerdict(null);setLines([]);setScreen("hub");};
-  const clearDebt=()=>{rmDebt();reset();};
-  const dc=d=>d==="MODERATE"?"diff-mod":d==="HARD"?"diff-hard":"diff-ext";
-  const uc=u=>u==="CRITICAL"?"urg-critical":u==="HIGH"?"urg-high":u==="MEDIUM"?"urg-med":"urg-low";
-  const canGo=!!(stance&&reasoning.trim().length>=30&&stake);
-  const vl=verdict?verdict.verdict.toLowerCase():"verified";
-  const shown=filter==="ALL"?CASES:CASES.filter(c=>c.category===filter);
+  const reset = () => { setSel(null); setStance(null); setReasoning(""); setStake(null); setVerdict(null); setLines([]); setScreen("hub"); };
+  const clearDebt = () => { rmDebt(); reset(); };
 
-  if(screen==="init")return<div className="root" style={{display:"flex",justifyContent:"center",alignItems:"center",minHeight:"100vh"}}><div className="blink-cur"/></div>;
+  const dc = d => d==="MODERATE" ? "diff-mod" : d==="HARD" ? "diff-hard" : "diff-ext";
+  const uc = u => u==="CRITICAL" ? "urg-critical" : u==="HIGH" ? "urg-high" : u==="MEDIUM" ? "urg-med" : "urg-low";
+  const canGo = !!(stance && reasoning.trim().length >= 30 && stake);
+  const vl = verdict ? verdict.verdict.toLowerCase() : "verified";
+  const shown = filter === "ALL" ? CASES : CASES.filter(c => c.category === filter);
 
-  return(
+  if (screen === "init") return (
     <div className="root">
-      <div className="wrap">
-        <div className="header">
-          <div>
+      <div className="init-screen"><div className="blink-cur" /></div>
+    </div>
+  );
+
+  return (
+    <div className="root">
+      {/* HEADER */}
+      <div className="header">
+        <div className="header-inner">
+          <div className="logo-block">
             <div className="logo" data-text="CONSPIRACY.GAME">CONSPIRACY.GAME</div>
             <span className="logo-sub">// CIVIC ENGINE — CROWDSOURCED INVESTIGATIVE PROTOCOL</span>
           </div>
           <div className="vp-block">
-            <div className="vp-label">VERIFICATION POWER</div>
-            <div className="vp-num">{vp}</div>
+            <div className="vp-label">Verification Power</div>
+            <div className="vp-row">
+              <div className="vp-num">{vp}</div>
+              <div className="vp-rank">{getRank(vp)}</div>
+            </div>
           </div>
         </div>
       </div>
 
-      {showBanner&&(
+      {/* API BANNER */}
+      {showBanner && (
         <div className="api-banner">
-          <span>⚡ Add your Anthropic API key for AI-powered verdicts. Smart scoring is used without it.</span>
-          <input className="api-input" type="password" placeholder="sk-ant-..." value={apiInput} onChange={e=>setApiInput(e.target.value)}/>
-          <button className="api-save-btn" onClick={saveKey}>SAVE KEY</button>
-          <span className="api-dismiss" onClick={()=>setShowBanner(false)}>✕</span>
+          <span className="api-banner-text">⚡ Add Anthropic API key for AI-powered verdicts</span>
+          <input className="api-input" type="password" placeholder="sk-ant-..." value={apiInput} onChange={e => setApiInput(e.target.value)} />
+          <button className="api-save-btn" onClick={saveKey}>SAVE</button>
+          <span className="api-dismiss" onClick={() => setShowBanner(false)}>✕ dismiss</span>
         </div>
       )}
 
-      {screen==="hub"&&(
+      {/* ── HUB ── */}
+      {screen === "hub" && (
         <div className="wrap hub screen">
-          <div className="hub-bar">
-            <div className="section-tag">◆ ACTIVE INVESTIGATIONS</div>
-            <div style={{fontSize:".58rem",color:"var(--text-dim)",letterSpacing:"2px"}}>{shown.length} OF {CASES.length} CASES</div>
+          <div className="hub-top">
+            <div className="section-eyebrow">◆ Active Investigations</div>
+            <div className="hub-count">{shown.length} of {CASES.length} cases</div>
           </div>
           <div className="filter-bar">
-            {CATS.map(cat=>(
-              <button key={cat} className={`filter-btn ${filter===cat?"filter-active":""}`} onClick={()=>setFilter(cat)}>
-                {cat==="ALL"?"ALL CASES":cat.length>18?cat.split(" ").slice(0,2).join(" "):cat}
+            {CATS.map(cat => (
+              <button key={cat} className={`filter-btn ${filter===cat?"filter-active":""}`} onClick={() => setFilter(cat)}>
+                {cat === "ALL" ? "All Cases" : cat.length > 20 ? cat.split(" ").slice(0,2).join(" ") : cat}
               </button>
             ))}
           </div>
-          <div className="hub-divider"/>
+          <div className="divider" />
           <div className="case-grid">
-            {shown.map(c=>(
-              <div key={c.id} className="case-card" onClick={()=>{setSel(c);setScreen("case");}}>
+            {shown.map(c => (
+              <div key={c.id} className="case-card" onClick={() => { setSel(c); setScreen("case"); }}>
                 <div className={`card-diff ${dc(c.difficulty)}`}>{c.difficulty}</div>
-                <div className="card-cat">{c.category}</div>
+                <div className="card-eyebrow">{c.category}</div>
                 <div className="card-codename">{c.codename}</div>
                 <div className="card-headline">{c.headline}</div>
                 <div className="card-meta">
                   <span>{c.analysts.toLocaleString()} analysts</span>
-                  <span>{c.daysOpen>365?Math.floor(c.daysOpen/365)+"y open":c.daysOpen+"d open"}</span>
+                  <span>{c.daysOpen > 365 ? Math.floor(c.daysOpen/365)+"y open" : c.daysOpen+"d open"}</span>
                 </div>
-                <div className="odds-track"><div className="odds-fill" style={{width:`${c.odds.confirm}%`}}/></div>
+                <div className="odds-bar"><div className="odds-fill" style={{width:`${c.odds.confirm}%`}} /></div>
                 <div className="odds-labels">
                   <span className="lbl-confirm">{c.odds.confirm}% confirm</span>
                   <span className="lbl-deny">{c.odds.deny}% deny</span>
@@ -524,171 +1468,248 @@ Respond ONLY with valid JSON no markdown:
               </div>
             ))}
           </div>
-          <div className="hub-footer">YOUR REASONING QUALITY DETERMINES YOUR OUTCOME · NOT RANDOMNESS · AI-EVALUATED · SKILL-BASED</div>
+          <div className="hub-footer">Your reasoning quality determines your outcome · Not randomness · AI-evaluated · Skill-based</div>
         </div>
       )}
 
-      {screen==="case"&&sel&&(
+      {/* ── CASE BRIEF ── */}
+      {screen === "case" && sel && (
         <div className="wrap brief-screen screen">
-          <button className="back-btn" onClick={()=>setScreen("hub")}>← BACK TO HUB</button>
+          <button className="back-btn" onClick={() => setScreen("hub")}>← Back to Hub</button>
           <div className="case-file">
             <div className={`urgency-tag ${uc(sel.urgency)}`}>{sel.urgency}</div>
-            <div className="file-cat">{sel.category} // {sel.codename}</div>
+            <div className="file-eyebrow">{sel.category} // {sel.codename}</div>
             <div className="file-headline">{sel.headline}</div>
             <div className="file-brief">{sel.brief}</div>
             <div className="file-stats">
-              <span>CASE #{sel.id.toUpperCase()}</span>
-              <span>{sel.daysOpen>365?Math.floor(sel.daysOpen/365)+"Y OPEN":sel.daysOpen+" DAYS OPEN"}</span>
-              <span>{sel.analysts.toLocaleString()} ANALYSTS</span>
-              <span>DIFFICULTY: {sel.difficulty}</span>
+              <span>Case #{sel.id.toUpperCase()}</span>
+              <span>{sel.daysOpen > 365 ? Math.floor(sel.daysOpen/365)+"Y open" : sel.daysOpen+" days open"}</span>
+              <span>{sel.analysts.toLocaleString()} analysts</span>
+              <span>Difficulty: {sel.difficulty}</span>
             </div>
           </div>
+
           <div className="evidence-box">
-            <div className="box-label">◆ AVAILABLE EVIDENCE</div>
-            {sel.evidence.map((e,i)=>(
+            <div className="box-label">◆ Available Evidence</div>
+            {sel.evidence.map((e,i) => (
               <div key={i} className="ev-row">
                 <div className="ev-key">[ {e.label} ]</div>
                 <div className="ev-val">{e.note}</div>
               </div>
             ))}
           </div>
+
           <div className="odds-pair">
-            <div className="odds-box-item">
-              <div className="ob-label">COMMUNITY: CONFIRM</div>
-              <div className="ob-value ob-green">{sel.odds.confirm}%</div>
+            <div className="odds-box">
+              <div className="ob-label">Community: Confirm</div>
+              <div className={`ob-value ob-green`}>{sel.odds.confirm}%</div>
             </div>
-            <div className="odds-box-item">
-              <div className="ob-label">COMMUNITY: DENY</div>
-              <div className="ob-value ob-red">{sel.odds.deny}%</div>
+            <div className="odds-box">
+              <div className="ob-label">Community: Deny</div>
+              <div className={`ob-value ob-red`}>{sel.odds.deny}%</div>
             </div>
           </div>
+
           <div className="hyp-box">
-            <div className="box-label">◆ HYPOTHESIS UNDER INVESTIGATION</div>
+            <div className="box-label">◆ Hypothesis Under Investigation</div>
             <div className="hyp-quote">"{sel.hypothesis}"</div>
           </div>
-          <button className="cta-btn" onClick={()=>setScreen("analysis")}>FILE YOUR ANALYSIS →</button>
+
+          <button className="cta-btn" onClick={() => setScreen("analysis")}>File Your Analysis →</button>
         </div>
       )}
 
-      {screen==="analysis"&&sel&&(
+      {/* ── ANALYSIS ── */}
+      {screen === "analysis" && sel && (
         <div className="wrap analysis-screen screen">
-          <button className="back-btn" onClick={()=>setScreen("case")}>← BACK TO CASE BRIEF</button>
-          <div className="screen-head">◆ SUBMIT ANALYSIS // {sel.codename}</div>
+          <button className="back-btn" onClick={() => setScreen("case")}>← Back to Case Brief</button>
+          <div className="screen-head">◆ Submit Analysis // {sel.codename}</div>
+
           <div className="hyp-box" style={{marginBottom:16}}>
-            <div className="box-label">HYPOTHESIS</div>
+            <div className="box-label">Hypothesis</div>
             <div className="hyp-quote">"{sel.hypothesis}"</div>
           </div>
-          <div style={{fontSize:".56rem",letterSpacing:"2.5px",color:"var(--text-dim)",marginBottom:8}}>YOUR STANCE</div>
-          <div className="stance-toggle">
-            <button className={`stance-btn ${stance==="confirm"?"stance-confirm":""}`} onClick={()=>setStance("confirm")}>✓  CONFIRM</button>
-            <button className={`stance-btn ${stance==="deny"?"stance-deny":""}`} onClick={()=>setStance("deny")}>✗  DENY</button>
-          </div>
-          <div style={{marginBottom:20}}>
-            <div className="area-label">
-              <span>ANALYTICAL REASONING</span>
-              <span className="area-hint">THIS IS WHAT GETS EVALUATED</span>
+
+          {showExample && sel && (
+            <div className="example-box">
+              <div className="example-header">
+                <span className="example-label">◆ Example High-Scoring Analysis</span>
+                <span className="example-score">{getExample(sel.id).score}/100</span>
+              </div>
+              <div className="example-text">"{getExample(sel.id).text}"</div>
             </div>
-            <textarea className="reasoning-input" value={reasoning} onChange={e=>setReasoning(e.target.value)}
-              placeholder={`Explain your reasoning. Reference specific evidence items by name.\n\n"The BBC timestamp anomaly is the most verifiable element here because..." scores far higher than "I think this is suspicious."\n\nQuality beats length.`}/>
-            <div className="char-bar">
-              <span className={reasoning.length>=150?"char-good":""}>{reasoning.length} chars {reasoning.length<100?"— aim for 150+":reasoning.length<200?"— getting there":"— good depth"}</span>
+          )}
+          <button className="example-toggle" onClick={() => setShowExample(e => !e)}>
+            {showExample ? "▲ Hide example analysis" : "▼ See what a high-scoring analysis looks like"}
+          </button>
+
+          <div style={{fontSize:"0.65rem",fontFamily:"var(--mono)",letterSpacing:"2.5px",color:"var(--white-40)",textTransform:"uppercase",marginBottom:10}}>Your Stance</div>
+          <div className="stance-row">
+            <button className={`stance-btn ${stance==="confirm"?"stance-confirm":""}`} onClick={() => setStance("confirm")}>✓ Confirm</button>
+            <button className={`stance-btn ${stance==="deny"?"stance-deny":""}`} onClick={() => setStance("deny")}>✗ Deny</button>
+          </div>
+
+          <div style={{marginBottom:22}}>
+            <div className="field-label">
+              <span>Analytical Reasoning</span>
+              <span className="field-hint">This is what gets evaluated</span>
+            </div>
+            <textarea
+              className="reasoning-area"
+              value={reasoning}
+              onChange={e => setReasoning(e.target.value)}
+              placeholder={`Explain your reasoning. Reference specific evidence items by name.\n\n"The LLC Registry cross-reference is the strongest element here because..." scores far higher than vague assertions.\n\nQuality beats length.`}
+            />
+            <div className="char-row">
+              <span className={reasoning.length >= 150 ? "char-good" : ""}>
+                {reasoning.length} chars {reasoning.length < 100 ? "— aim for 150+" : reasoning.length < 200 ? "— getting there" : "— good depth"}
+              </span>
               <span>quality &gt; length</span>
             </div>
           </div>
-          <div style={{marginBottom:22}}>
-            <div className="sub-label">◆ STAKE YOUR RESEARCH LABOR</div>
-            <div className="sub-note">If your reasoning earns a REJECTED verdict, you must complete this task to unlock the platform.</div>
-            {STAKES.map(s=>(
-              <div key={s.id} className={`stake-row ${stake?.id===s.id?"stake-selected":""}`} onClick={()=>setStake(s)}>
+
+          <div>
+            <div className="stake-label-block">
+              <div className="field-label"><span>◆ Stake Your Research Labor</span></div>
+            </div>
+            <div className="stake-note">
+              Analysts who stake harder tasks signal real confidence. If your reasoning is REJECTED, you must complete this task before continuing.
+            </div>
+            {STAKES.map(s => (
+              <div key={s.id} className={`stake-item ${stake?.id===s.id?"stake-selected":""}`} onClick={() => setStake(s)}>
                 <span>{s.label}</span>
                 <span className="stake-time">{s.time}</span>
               </div>
             ))}
           </div>
-          <button className="submit-btn" onClick={submit} disabled={!canGo}>
-            {!stance?"SELECT YOUR STANCE FIRST":reasoning.trim().length<30?"ADD YOUR REASONING TO PROCEED":!stake?"SELECT A STAKE":"TRANSMIT TO CONSENSUS NETWORK →"}
+
+          <button className="submit-btn" onClick={submit} disabled={!canGo} style={{marginTop:20}}>
+            {!stance ? "Select your stance first" :
+             reasoning.trim().length < 30 ? "Add your reasoning to proceed" :
+             !stake ? "Select a stake" :
+             "Transmit to Consensus Network →"}
           </button>
         </div>
       )}
 
-      {screen==="loading"&&(
+      {/* ── LOADING ── */}
+      {screen === "loading" && (
         <div className="wrap">
           <div className="loading-screen screen">
-            <div className="load-title">TRANSMITTING ANALYSIS</div>
-            {lines.map((l,i)=>(
+            <div className="load-title">Transmitting Analysis</div>
+            {lines.map((l,i) => (
               <div key={i} className={`term-line ${l.type==="ok"?"t-ok":l.type==="warn"?"t-warn":"t-dim"}`}>
-                {l.type==="ok"?"▶ ":l.type==="warn"?"⚠ ":"· "}{l.text}
+                {l.type==="ok" ? "▶ " : l.type==="warn" ? "⚠ " : "· "}{l.text}
               </div>
             ))}
-            <div className="blink-cur"/>
+            <div className="blink-cur" />
           </div>
         </div>
       )}
 
-      {screen==="verdict"&&verdict&&(
+      {/* ── VERDICT ── */}
+      {screen === "verdict" && verdict && (
         <div className="wrap verdict-screen screen">
           <div className={`verdict-frame vf-${vl}`}>
             <span className={`verdict-stamp vs-${vl}`}>{verdict.verdict}</span>
             <div className={`verdict-score score-${vl}`}>{verdict.score}</div>
-            <div className="score-sub">ANALYTICAL QUALITY SCORE / 100</div>
+            <div className="score-sub">Analytical Quality Score / 100</div>
             <div className={`vp-delta ${verdict.vpDelta>0?"delta-pos":verdict.vpDelta<0?"delta-neg":"delta-zero"}`}>
-              {verdict.vpDelta>0?`+${verdict.vpDelta} VP EARNED`:verdict.vpDelta<0?`${verdict.vpDelta} VP PENALTY`:"NO VP CHANGE"}
+              {verdict.vpDelta > 0 ? `+${verdict.vpDelta} VP Earned` : verdict.vpDelta < 0 ? `${verdict.vpDelta} VP Penalty` : "No VP Change"}
             </div>
           </div>
-          <div className="verdict-summary">
-            <div className="box-label">◆ ANALYTICAL REVIEW</div>
-            {verdict.summary}
+
+          <div className="verdict-card">
+            <div className="box-label">◆ Analytical Review</div>
+            <div className="verdict-summary-text">{verdict.summary}</div>
           </div>
+
           <div className="sw-grid">
             <div className="sw-box">
-              <div className="sw-head sw-green">◆ STRENGTHS</div>
-              {(verdict.strengths||[]).map((s,i)=><div key={i} className="sw-item">{s}</div>)}
+              <div className="sw-head sw-green">◆ Strengths</div>
+              {(verdict.strengths||[]).map((s,i) => <div key={i} className="sw-item">{s}</div>)}
             </div>
             <div className="sw-box">
-              <div className="sw-head sw-red">◆ AREAS TO DEVELOP</div>
-              {(verdict.weaknesses||[]).map((w,i)=><div key={i} className="sw-item">{w}</div>)}
+              <div className="sw-head sw-red">◆ Areas to Develop</div>
+              {(verdict.weaknesses||[]).map((w,i) => <div key={i} className="sw-item">{w}</div>)}
             </div>
           </div>
-          <div className="conclusion-box">
-            <div className="box-label">◆ ANALYST CONCLUSION</div>
-            <div style={{fontSize:".82rem",lineHeight:1.75,color:"rgba(255,255,255,.78)"}}>{verdict.conclusion}</div>
+
+          <div className="verdict-card" style={{marginBottom:12}}>
+            <div className="box-label">◆ Analyst Conclusion</div>
+            <div className="verdict-summary-text">{verdict.conclusion}</div>
           </div>
-          {verdict.verdict==="REJECTED"?(
-            <>
-              <div style={{textAlign:"center",padding:14,fontSize:".7rem",letterSpacing:"2px",color:"var(--red-bright)",border:"1px solid var(--red)",marginBottom:14}}>
-                INTELLECTUAL DEBT RECORDED — COMPLETE YOUR STAKED TASK TO CONTINUE
+
+          {sel && (
+            <div className="community-section">
+              <div className="box-label" style={{marginBottom:12}}>◆ How Other Analysts Approached This Case</div>
+              <div className="community-analysis">
+                <div className="ca-header">
+                  <span className="ca-analyst">ANALYST: VERIDIAN_7 <span className={`ca-stance ${getExample(sel.id).stance==="CONFIRM"?"ca-confirm":"ca-deny"}`}>{getExample(sel.id).stance}</span></span>
+                  <span className="ca-score">{getExample(sel.id).score}</span>
+                </div>
+                <div className="ca-text">"{getExample(sel.id).text}"</div>
               </div>
-              <button className="action-btn btn-red" onClick={()=>setScreen("debt")}>VIEW DEBT OBLIGATION →</button>
+              <div className="community-analysis">
+                <div className="ca-header">
+                  <span className="ca-analyst">ANALYST: NULL_TRACE <span className="ca-stance ca-deny">DENY</span></span>
+                  <span className="ca-score" style={{color:"var(--white-70)"}}>72</span>
+                </div>
+                <div className="ca-text">"The available evidence establishes suspicious patterns but falls short of proving intentionality. Correlation between political connections and contract awards exists in many legitimate procurement processes. The 90-day incorporation timeline is unusual but not impossible. I'd want to see the actual contract specifications and whether the winning bids were competitive on price before confirming the hypothesis."</div>
+              </div>
+            </div>
+          )}
+
+          {verdict.verdict === "REJECTED" ? (
+            <>
+              <div style={{textAlign:"center",padding:"14px",fontFamily:"var(--mono)",fontSize:"0.7rem",letterSpacing:"2px",color:"var(--red)",border:"1px solid var(--red-20)",background:"var(--red-08)",marginBottom:12}}>
+                Intellectual Debt Recorded — Complete your staked task to continue
+              </div>
+              <button className="action-btn btn-red" onClick={() => setScreen("debt")}>View Debt Obligation →</button>
             </>
-          ):(
-            <button className="action-btn btn-amber" onClick={reset}>NEXT INVESTIGATION →</button>
+          ) : (
+            <button className="action-btn btn-green" onClick={reset}>Next Investigation →</button>
           )}
         </div>
       )}
 
-      {screen==="debt"&&debt&&(
+      {/* ── DEBT ── */}
+      {screen === "debt" && debt && (
         <div className="wrap debt-screen screen">
           <div className="debt-header">
-            <div className="debt-title">INTELLECTUAL DEBT</div>
-            <div className="debt-sub">SYSTEM LOCKED // CASE {debt.codename}<br/>Complete your staked research obligation to restore platform access.</div>
+            <div className="debt-title">Intellectual Debt</div>
+            <div className="debt-sub">
+              System locked // Case {debt.codename}<br/>
+              Your analysis did not meet the quality threshold.<br/>
+              Complete your staked research obligation to restore access.
+            </div>
           </div>
           <div className="debt-task">
-            <div className="debt-task-label">◆ YOUR STAKED RESEARCH OBLIGATION</div>
+            <div className="debt-task-label">◆ Your Staked Research Obligation</div>
             <div className="debt-task-text">{debt.task}</div>
           </div>
           <div className="honor-text">
-            This is an honor system. The entire platform runs on trust in the investigative process.<br/>
-            Do not click below until you have genuinely completed this research task.<br/>
+            This is an honor system. The platform runs on trust in the investigative process.<br/>
+            Do not click below until you have genuinely completed this task.<br/>
             Our collective integrity is the only thing that makes this work matter.
           </div>
-          <button className="clear-debt-btn" onClick={clearDebt}>✓ RESEARCH TASK COMPLETED — UNLOCK SYSTEM</button>
+          <button className="clear-btn" onClick={clearDebt}>✓ Research Task Completed — Unlock System</button>
         </div>
       )}
+    {/* ── FOOTER ── */}
+      <div className="site-footer">
+        <div className="site-footer-inner">
+          <img className="footer-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAOdEVYdFNvZnR3YXJlAEZpZ21hnrGWYwAABtlJREFUeAHtXV1qW0cUPi4uOJBQB1KwwSYyOFA/FNuPeShJVtDswN6B1RVIXoGVFdheQZ0V2KEPfW2eU5BNCwkkYJcU0oeGm/tp7tEd/cSauXd+jqT54DC2rjR3Zr4583vmzAIRZZQgBt9QgigkQoQhESIMiRBhSIQIQyJEGBIhwpAIEYZFmgY0loh27qpwuwgbd8pnOm7+V3L5SYWv/yX6o5DL/0g6FkjiTH05ryfPHxA9Wc7D79X/LgBCLq6JXt3k4Y1IguQQwiTsrRA9vT/4DDUdhYhazzWdCzMPsyyjhYWFMh5oDYfQrJ17SrOGiQU5p++ITt6RFMQnBIV0sEbUXB8sMBBw9j6XD+5qco+cXPZXlfYxWHMOL6NrTTxCUPidzVwjVsvPmATUWGiFT0B7ni6PknPyNjoxWVBZXsyo1cjo+qeMsmdKzn7M8sIJmw5ddu5mdLJVpgeCNMZJT8CXodC7j8tM/5oT0ViKlfFRQVp0YpDW/ZXQ6QjwEmjF0WaZ0YtdpxoBOE0viNErDtKOPLh8RzRC9MyhmWquO3+Hc0JY2huD2hJGmz1G/vxB2Vd4zJA3QmhMhUKefL3LKyHNtbJ2oV32qPJeCYEg7Z1HoTp8D5G2NFVvN3wmPqzoTZg/UhxHqJPhob+ILrrm+yHFYWQ6GeGHi+EEeetXujXX8TuKCJ3dLGvGsOia4rajdxAJRiI8morQZ3jv1L8m3Kcg7+5GkDUjwAiEh4WdTb8FII0QCM/sUQZuRpI1I+AZuLsETRcheoU8clIha/xY79wirklFJQSiN9k1l4Tq7am3NlR42I26XN3fnIoF5B1lABxv1d7hrMYmD3GhrnVq1yzJ+a6LgU2FH0FFBTRV4gTNFY+6Kvan1ZqsdkOF2NmbAkuOYIDhBLac0WQdbVIV2G/hYuuz+1j9vfG7CEIGjBxiQy+f+79Zb0Xba0jSjtuBMnn5Qf3dXCNb2BPypDDRefEXJXwFnaJsDtatR1x2hOyvKJV8da3soxLG46IwxGNbMwvYEcImO4IMywAx/YeOl+9VCMM/C5gTwnZMANhPuB1caWGFadFsmRPCZKC5Sp35ZGB0xRXXotmyJ0RYcyUa3GzplpETYE4Ij64EduZqbVEgzorhLyz4DWFGSO88xpJSwzS6MgeadpQZW+IbwIwQWIwDrz9SgiXQ5wJchhNgR0jSDnvwAMiLhgglROQ8hMFltu1SQ777VoVpuGsPLrMNlxrCkfk+RDOLYEIe3jH6uqGGLA5GLgmtBuUbQkoq7kFIgtmcnqf+0jQEBOBsIgN//5OnsX1JYuClUy8wbgKGz3QJ+nx/deT7vSXvUO83fG4Dq8X6caOZSSMc388nIXb6es+zZ2SK6Xat8eLv0c9O39I0w4yQK7t2MBjaXUUKu9PAcebmnyQKlv3vdPg6uQ3NN0qkomE3ZTDTkK5QDZkGsIZcfTL6umGTVUSWCLFHX0M+G33djBBejzFcsQwNsfshQH8d0Gyl3IyQ/uTGbPqfoGH7ngoNF2btNMRiKzKhgOVKubmGWO58JZAiA2Wm+/eaAPOJIW/YWxp+hYDY/RDWDguzKXNCONKf5REiFmxYyNu4BjAnhC0oLA2/5hYVDQvNCdENv/btzCPnEhUNC+0WF3nhTlizJXIeUsMO2vzIFY5pOTpt6lKin8IdFrgMrHj+0k5D0GzxkveB/WGUuQEf1KlglG5/pA0dOvavgXSkbRQ1j/zZb1BBS06LdvHoEUmAqHmIgyN/9m2k0L4kujg4Ll5tC1fvS2CGk6BwvqvCw26tprxabdCdrrh34jV94s6zRY0f654L5t35jDtPejUTw946k3smV/7CHCboeMt/AUgjxL2/MAeJ0v1FRXBiH42QlkQXfywDTjDnoJMX7QRzXCL3ZthN7N6KT0fRjhOre3+eRU3RK50fD6weEh3GJXd4CeNC3VPidVI8378RxBn/8VYoR9EeM5KuqxBGyHCGPDVh3ghBfxGgQoUlBDJ8/4bjzDknBEtC5ztlejuzdOWRLljn0bXl+Ad5l4LhojK94oTfXqAsuOgdPhODfegYaYGg0HUi0EwhjRHW5uJdLImtzvbGoMc1vgo1xD212IqGORMsaPSrXrHT98ubaCeO41+9ysTAkFu3G2Zy+KZnV++CKewwCbzhBueVkY9+y7otGjV2+CpUoOcW6mN5FTcbfxfhgJEDk8oupWBf+3BpvMUlrnrFVauwyhRyBl/m9d1sholCHNacOkChw2icPVALdBUik5Bh9K/hLq7i5mMRcPkxXOuvymu9B677ThfcJ1TBdDsOmEEkQoQhESIMiRBhSIQIQyJEGBIhwpAIEYYvRkL6G/ut+PIAAAAASUVORK5CYII=" alt="Chas Goudie" />
+          <div className="footer-text">
+            Made with <span className="footer-heart">♥</span> by <span className="footer-name">Chas Goudie</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
 </body>
 </html>
